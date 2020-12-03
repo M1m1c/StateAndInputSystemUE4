@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the DisplayName page of Project Settings.
 
 #pragma once
 
@@ -130,5 +130,21 @@ public:
 
 	void SetValuesFromClass(UInputButtonClass* inputButton);
 	void ResetToDefault(EInputButtons button);
+};
+
+USTRUCT()
+struct STATEANDINPUTSYSTEM_API FInputFrame
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(VisibleInstanceOnly)
+		TArray<FInputButtonStruct> ContainedButtons;
+
+	UPROPERTY(VisibleInstanceOnly)
+		EInputDirections DirectionalInput;
+
+	UPROPERTY(VisibleInstanceOnly)
+		float TimeStamp;
 };
 #pragma endregion STRUCTS
