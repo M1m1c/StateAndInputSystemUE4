@@ -1,6 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the DisplayName page of Project Settings.
 
 #include "SampleCharacter.h"
+#include "StateBase.h"
 
 
 // Sets default values
@@ -25,10 +26,35 @@ void ASampleCharacter::Tick(float DeltaTime)
 
 }
 
-// Called to bind functionality to input
-void ASampleCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+//----------------------------------SET CURRENT STATE---------------------------------------------------------------------------
+//Sets the current state to the new state and initalizes the new state
+void ASampleCharacter::SetCurrentState(UStateBase * NewState)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if (NewState == nullptr)
+	{		
+			NewState = DefaultState;
+	}
 
+	//this->StopAnimMontage();
+	//this->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+	//this->GetRootMotionAnimMontageInstance()->
+	CurrentState = NewState;
+	CurrentState->InitializeThisState(this);
+	QuedState = nullptr;
+
+	bAllowQueuedStateSwitching = false;
+
+	UE_LOG(LogTemp, Warning, TEXT("%s @SetCurrentState Switching state to: %s"), *GetName(), *NewState->StateName.ToString());
+}
+
+//----------------------------------GET CURRENT STATE---------------------------------------------------------------------------
+UStateBase * ASampleCharacter::GetCurrentState()
+{
+	return CurrentState;
+}
+//----------------------------------GET DEFAULT STATE---------------------------------------------------------------------------
+UStateBase* ASampleCharacter::GetDefaultState()
+{
+	return DefaultState;
 }
 
