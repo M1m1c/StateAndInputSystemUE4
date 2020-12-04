@@ -1,14 +1,18 @@
 // Fill out your copyright notice in the DisplayName page of Project Settings.
 
 #include "SampleCharacter.h"
+#include "StateMachineBase.h"
 #include "StateBase.h"
+#include "InputClasses.h"
 
 
 // Sets default values
-ASampleCharacter::ASampleCharacter()
+ASampleCharacter::ASampleCharacter(const FObjectInitializer& ObjectInitializer)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	MyStateMachine = ObjectInitializer.CreateDefaultSubobject<UStateMachineBase>(this, TEXT("StateMachine"));
 
 }
 
@@ -17,6 +21,13 @@ void ASampleCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (!DefaultState)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s @beginPlay no DefaultState set, destroying this character"), *GetName());
+		Destroy();
+	}
+
+	SetCurrentState(DefaultState);
 }
 
 // Called every frame
@@ -24,6 +35,11 @@ void ASampleCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ASampleCharacter::ForwardInputStreamToStateMachine(const TArray<struct FInputFrame>& InputStream)
+{
+	MyStateMachine->CheckAllStateLinks(CurrentState, InputStream);
 }
 
 //----------------------------------SET CURRENT STATE---------------------------------------------------------------------------

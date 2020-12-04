@@ -15,7 +15,7 @@ class STATEANDINPUTSYSTEM_API ASampleCharacter : public ACharacter
 
 public:
 	// Sets default values for this character's properties
-	ASampleCharacter();
+	ASampleCharacter(const FObjectInitializer& ObjectInitializer);
 
 protected:
 	// Called when the game starts or when spawned
@@ -35,6 +35,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void ForwardInputStreamToStateMachine(const TArray<struct FInputFrame> &InputStream);
+
 	virtual void SetCurrentState(UStateBase* NewState);
 	virtual UStateBase* GetCurrentState();
 	virtual UStateBase* GetDefaultState();
@@ -43,6 +45,7 @@ public:
 	//this gets set in the StateBase class.
 	UStateBase * QuedState;
 
+	class UStateMachineBase * MyStateMachine;
 
 	
 };
