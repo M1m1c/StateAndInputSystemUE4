@@ -158,7 +158,8 @@ void ASamplePlayerController::Tick(float DeltaSeconds)
 			return;
 		}
 
-		myCharacter->GetCurrentState()->CheckAllStateLinks(myCharacter, InputStream);
+		myCharacter->ForwardInputStreamToStateMachine(InputStream);
+		
 	}
 	else
 	{
