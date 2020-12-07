@@ -35,6 +35,7 @@ void ASampleCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (QuedState) { SetCurrentState(QuedState); }
 }
 
 void ASampleCharacter::ForwardInputStreamToStateMachine(const TArray<struct FInputFrame>& InputStream)
