@@ -67,7 +67,6 @@ protected:
 
 	UInputButtonClass * FindSpecificButtonInArray(TArray<UInputButtonClass*>& collection, EInputButtons button);
 
-	//Don't Need Directional inputs
 	void ReadYAxis(float value);
 	void ReadXAxis(float value);
 
@@ -102,8 +101,6 @@ protected:
 	UInputButtonClass* RightBumper;
 	UInputButtonClass* LeftBumper;
 
-	//TODO Ok so for some reason this acts as an input delay, which it should not, look into a solution maybe ring buffer
-	// Input atoms are removed when they pass this age threshold. all moves must be executed under this time.
 	UPROPERTY(EditAnywhere)
 		float InputExpirationTime = 0.5f;
 
@@ -111,14 +108,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 		int32 InputBufferSize = 10;
 
-	//TODO make them instanced per character
-	//Order in this array is the same as EFGButtonState: Up, JustPressed, Held.
-	//UPROPERTY(EditAnywhere, Category = "Input Atoms")
 	UPROPERTY(VisibleAnywhere, Category = "Input Atoms")
 		TArray<UInputButtonClass*> ButtonAtoms;
-
-
-	//ABladeBreakerCharacter* MyCharacter;
 
 	UPROPERTY(EditAnywhere)
 		float TimeTilButtonHeldDown = 0.3f;

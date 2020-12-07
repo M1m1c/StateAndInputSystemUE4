@@ -9,10 +9,32 @@
 
 ASamplePlayerController::ASamplePlayerController()
 {
+}
+
+//----------------------------------BEGIN PLAY---------------------------------------------------------------------------
+void ASamplePlayerController::BeginPlay()
+{
+	Super::BeginPlay();
 
 	InitaliseButtonAtoms();
 
 	CurrentInputFrame.DirectionalInput = EInputDirections::None;
+
+	int32 ButtonInputCount = (int32)EInputButtons::Count;
+	for (int32 i = 0; i < ButtonInputCount; i++)
+	{
+		if (!ButtonAtoms.IsValidIndex(i) || !ButtonAtoms[i])
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s @BeginPlay Not enough button input atoms or a NULL entry was found in the list"), *GetName());
+			Destroy();
+			return;
+		}
+
+	}
+
+	myCharacter = Cast<ASampleCharacter>(GetPawn());
+
+	bActivated = true;
 }
 
 void ASamplePlayerController::InitaliseButtonAtoms()
@@ -64,27 +86,6 @@ void ASamplePlayerController::InitaliseButtonAtoms()
 		TempInputAtom = NULL;
 	}
 }
-
-//----------------------------------BEGIN PLAY---------------------------------------------------------------------------
-void ASamplePlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	int32 ButtonInputCount = (int32)EInputButtons::Count;
-	for (int32 i = 0; i < ButtonInputCount; i++)
-	{
-		if (!ButtonAtoms.IsValidIndex(i) || !ButtonAtoms[i])
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%s @BeginPlay Not enough button input atoms or a NULL entry was found in the list"), *GetName());
-			Destroy();
-			return;
-		}
-
-	}
-
-	myCharacter = Cast<ASampleCharacter>(GetPawn());
-}
-
 
 //----------------------------------SETUP INPUT COMPONENT---------------------------------------------------------------------------
 void ASamplePlayerController::SetupInputComponent()
@@ -250,6 +251,7 @@ void ASamplePlayerController::CalculateDirectionalInput()
 	}
 }
 
+//TODO remove Debug Messages
 //----------------------------------CALCULATE BUTTON INPUT---------------------------------------------------------------------------
 //Measures the state of buttons and adds them to the input stream
 void ASamplePlayerController::CalculateButtonInput(FString DebuggInpputStream)
