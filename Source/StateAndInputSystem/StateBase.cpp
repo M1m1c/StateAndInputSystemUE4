@@ -13,23 +13,6 @@
 void UStateBase::InitializeThisState(ASampleCharacter * Character)
 {
 	ResetTimeInThisState();
-
-	
-
-
-	/*if ((FrameSetWindow.X != 0.0f || FrameSetWindow.Y != 0.0f) && ShouldCountTimeInMove == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s @InitializeThisState Had specified frameset but will not count the time in move becasue it was false"), *GetName());
-	}*/
-
-	/*if (!ThisStatesMove)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s @InitializeThisState State had No Move returning"), *GetName());
-		return;
-	}
-*/
-
-	
 }
 //----------------------------------RESET TIME IN THIS STATE---------------------------------------------------------------------------
 void UStateBase::ResetTimeInThisState()
