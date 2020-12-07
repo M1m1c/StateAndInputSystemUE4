@@ -38,9 +38,6 @@ void UStateMachineBase::BeginPlay()
 //Takes in a reference to the playerpawn, A list of all the inputs performed within a timespan, , all the StateLinks this state has to other states, 
 void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArray<FInputFrame> &InputStream)//, TArray<FStateLink> StateLinks)
 {
-	//TODO (I think this is done) Make it so that we only startchecking for input if we are in a frame set window,- 
-	//TODO (However this is not really) -otherwise allow the inputs to build up in the input stream. Currently every input gets killed instantly.
-	
 
 	if (MyCharacter->QuedState != nullptr)
 	{
@@ -49,29 +46,17 @@ void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArra
 	}
 
 	if (currentState->StateLinks.Num())
-		//|| InputlessStateLinks.Num() ||
-		//(SharedStateLinks && SharedStateLinks->StateLinks.Num()) ||
-		//(InputlessSharedStateLinks && InputlessSharedStateLinks->StateLinks.Num()))
+		// || (SharedStateLinks && SharedStateLinks->StateLinks.Num())
 	{
-		//TODO remove these frame set windows we don't use them, instead we use notifies
-		/*if ((FrameSetWindow.X == 0.0f && FrameSetWindow.Y == 0.0f) || (TimeInThisState > FrameSetWindow.X && TimeInThisState < FrameSetWindow.Y))
-		{
-		}*/
-
-		//TODO Go through the entire input stream per state link until we find somehting that matches
-		//TODO setup so that links have FrameFailThreshold, InputFailThreshold and TimeFailThreshold
-		//TODO if one of the fail thresholds is met or we run the entire input stream, then return not accepted and go to the next statelink
 		if (InputStream.Num())
 		{
 			if (DoesLastElementOfInputstreamContainAcitveButtons(InputStream))
 			{
-				//int32 NotAcceptedLinkTries = 0;
 				StateToSwitchTo = nullptr;
 
 				// SET LINKS
 				if (CheckStateLinks(currentState->StateName.ToString(), InputStream, currentState->StateLinks)) return;
 
-				//Maybe we should go through shared links before set links, so that we can prioratise blocking, bursting and dashing.
 				// SHARED LINKS					
 				/*if (SharedStateLinks)
 				{
@@ -83,22 +68,11 @@ void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArra
 				}*/
 			}
 		}
-
-		//--------------------------------INPUTLESS STATE LINKS--------------------------------------------
-		/*if (CheckStateLinks(Character, InputStream, InputlessStateLinks)) return;
-
-		//--------------------------------INPUTLESS SHARED STATE LINKS--------------------------------------------
-		if (InputlessSharedStateLinks)
-		{
-			if (CheckStateLinks(Character, InputStream, InputlessSharedStateLinks->StateLinks)) return;
-		}
-		*/
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s @CheckStateLinks had no StateLinks returning to default state"), *GetName());
-
-		QueueState( MyCharacter->GetDefaultState(), DefaultLink);
+		//UE_LOG(LogTemp, Warning, TEXT("%s @CheckStateLinks had no StateLinks returning to default state"), *GetName());
+		//QueueState( MyCharacter->GetDefaultState(), DefaultLink);
 		return;
 	}
 }
@@ -126,9 +100,6 @@ bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<F
 			switch (CheckOneStateLink(InputStream, StateLinksToCheck[i]))
 			{
 			case EStateMachineCompletionType::Accepted:
-
-				//TODO if it is the default state that we are switching to then probably don't clear the input stream
-				//TODO clear insputstream widget in UI of character
 				Cast<ASamplePlayerController>(MyCharacter->GetController())->ClearInputStream();
 				UE_LOG(LogTemp, Warning, TEXT("@CheckStateLinks %s LINK Accepted"), *StateToSwitchTo->StateName.ToString());
 				QueueState( StateToSwitchTo, StateLinksToCheck[i]);
@@ -136,9 +107,6 @@ bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<F
 				return retflag;
 				break;
 			case EStateMachineCompletionType::NotAccepted:
-				// Decrese remaining steps
-				//NotAcceptedLinkTries++;
-				// or do nothing
 				break;
 			}
 		}
@@ -164,18 +132,6 @@ EStateMachineCompletionType UStateMachineBase::CheckOneStateLink( const TArray<F
 		UE_LOG(LogTemp, Warning, TEXT("%s @CheckOneStatelink One State Link had no next state to go to"), *GetName());
 		return EStateMachineCompletionType::NotAccepted;
 	}
-
-	/*if (!OneStateLink.NextState->ThisStatesMove)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s @CheckOneStatelink One State Link had no move to use"), *GetName());
-		return EStateMachineCompletionType::NotAccepted;
-	}*/
-
-	/*if (!CheckSpecialLinkCondition(OneStateLink, Character))
-	{
-		//Special Link Condition requirments failed
-		return EStateMachineCompletionType::NotAccepted;
-	}*/
 
 	auto amountOfButtonBitflags = CheckHowManyBitFlagsSet(OneStateLink.RequiredButtons.RequiredButton, (int32)EInputButtons::Count);
 
@@ -212,7 +168,7 @@ EStateMachineCompletionType UStateMachineBase::CheckOneStateLink( const TArray<F
 	else if (OneStateLink.RequieredDirections.Num() > 0 && amountOfButtonBitflags <= 0)
 	{
 		CorrectDirectionInputs = FindRequiredDirectionsInInputStream(OneStateLink, InputStream, false);
-		//TODO only for this case, do not accept it if the input frame with the direciton also contains a button.
+
 		if ((CorrectDirectionInputs + OneStateLink.MissTolerance) >= OneStateLink.RequieredDirections.Num())
 		{
 			StateToSwitchTo = OneStateLink.NextState;
@@ -240,15 +196,15 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 	int32 FirstDirInputIndex = 0;
 	int32 LastDirInputIndex = InputStream.Num();
 	int32 TempReturnIndex = 0;
-	float TimeFail = (float)OneStateLink.TimeFailThreshold * 0.016f;
-	float PreviousTimeStamp = InputStream.Last().TimeStamp;
-	int32 frameFail = OneStateLink.FrameFailThreshold;
+	float sequenceLengthFail = (float)OneStateLink.SequenceLengthFailThreshold * 0.016f;
+	float LastTimeStamp = InputStream.Last().TimeStamp;
+	int32 frameGapFail = OneStateLink.FrameGapFailThreshold;
 
 	while (dirCheckSteps > 0)
 	{
 		if (CorrectDirectionalInputs == 0)
 		{
-
+			//Find the first correct direction that is within the SequenceLength threshold
 			if (TempRequierdDirections.IsValidIndex(0))
 			{
 				if (FoundRequiredDirectionIndexInInputStream(
@@ -259,9 +215,9 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 					FirstDirInputIndex,
 					InputStream.Num(),
 					TempReturnIndex,
-					PreviousTimeStamp,
-					TimeFail,
-					frameFail,
+					LastTimeStamp,
+					sequenceLengthFail,
+					frameGapFail,
 					allowButtons))
 				{
 
@@ -274,10 +230,10 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 					FirstDirInputIndex++;
 				}
 			}
-
 		}
 		else if (CorrectDirectionalInputs < TempRequierdDirections.Num())
 		{
+			//Finds the correct directions that are between the last found index and the first found index
 			for (int32 z = TempRequierdDirections.Num() - 1; -1 < z; z--)
 			{
 				if (TempRequierdDirections.IsValidIndex(z) &&
@@ -293,9 +249,9 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 						FirstDirInputIndex,
 						LastDirInputIndex,
 						TempReturnIndex,
-						PreviousTimeStamp,
-						TimeFail,
-						frameFail,
+						LastTimeStamp,
+						sequenceLengthFail,
+						frameGapFail,
 						allowButtons))
 					{
 						TempRequierdDirections[z].FoundThisDirInput = true;
@@ -312,7 +268,10 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 	return CorrectDirectionalInputs;
 }
 
-
+//Loops through inputstream either forwards or reverse from loopStart to loopStop.
+//Returns true if it manages to match the correct direction with one in the inputstream.
+//Uses TempReturnIndex as an out parameter to determine which index the correct direction was found on,
+//so that next cycle around that can be used to determine where to start the loop.
 bool UStateMachineBase::FoundRequiredDirectionIndexInInputStream(
 	TArray<FLinkConditonDirection> &TempRequierdDirections,
 	const TArray<FInputFrame> & InputStream,
@@ -321,9 +280,9 @@ bool UStateMachineBase::FoundRequiredDirectionIndexInInputStream(
 	int32 Start,
 	int32 End,
 	int32 &TempReturnIndex,
-	float PreviousTimeStamp,
-	float TimeFail,
-	int32 frameFail,
+	float LastTimeStamp,
+	float sequenceLengthFail,
+	int32 frameGapFail,
 	bool allowButtons)
 {
 
@@ -335,22 +294,26 @@ bool UStateMachineBase::FoundRequiredDirectionIndexInInputStream(
 
 	for (int32 i = LoopStart; i != LoopStop; i += LoopStep)
 	{
-		if (InputStreamFrameCounter > frameFail)
+		if (InputStreamFrameCounter > frameGapFail)
 		{
 			break;
 		}
+		
 
 		if (InputStream.IsValidIndex(i))
 		{
-			if (TempRequierdDirections[RequiredDirIndex].FoundThisDirInput == false)
+			bool isThisInputNotFoundYet = TempRequierdDirections[RequiredDirIndex].FoundThisDirInput == false;
+			if (isThisInputNotFoundYet)
 			{
-				if (TempRequierdDirections[RequiredDirIndex].RequieredDirection & 1 << (int32)InputStream[i].DirectionalInput)
+				bool isRequiredDirectionInInputFrame = TempRequierdDirections[RequiredDirIndex].RequieredDirection & 1 << (int32)InputStream[i].DirectionalInput;
+				if (isRequiredDirectionInInputFrame)
 				{
-					if (PreviousTimeStamp >= InputStream[i].TimeStamp)
+					if (LastTimeStamp >= InputStream[i].TimeStamp)
 					{
-						if (PreviousTimeStamp - InputStream[i].TimeStamp <= TimeFail)
+						bool isInputFrameInSequenceLength = LastTimeStamp - InputStream[i].TimeStamp <= sequenceLengthFail;
+						if (isInputFrameInSequenceLength)
 						{
-							if (allowButtons &&IsButtonInFrameJustPressed(InputStream[i]))
+							if (allowButtons && IsButtonInFrameJustPressed(InputStream[i]))
 							{
 								RetFlag = true;
 								TempReturnIndex = i;
@@ -422,43 +385,7 @@ int32 UStateMachineBase::FindRequiredButtonsInInputStream(const TArray<FInputFra
 	}
 	return correctButtons;
 }
-/*
-bool UStateMachineBase::CheckSpecialLinkCondition(FStateLink &OneStateLink, ASampleCharacter * Character)
-{
-	bool SLC_Status = false;
-	if (!OneStateLink.SpecialLinkCondition)
-	{
-		SLC_Status = true;
-	}
-	else
-	{
-		if (OneStateLink.ReverseSpecialLinkCondition == false)
-		{
-			if (OneStateLink.SpecialLinkCondition->IsSpecialConditionTrue(Character))
-			{
-				SLC_Status = true;
-			}
-			else
-			{
-				SLC_Status = false;
-			}
-		}
-		else
-		{
-			if (OneStateLink.SpecialLinkCondition->IsSpecialConditionTrue(BBCharacter))
-			{
-				SLC_Status = false;
-			}
-			else
-			{
-				SLC_Status = true;
-			}
-		}
-	}
 
-	return SLC_Status;
-}
-*/
 bool UStateMachineBase::DoesLastElementOfInputstreamContainAcitveButtons(const TArray<FInputFrame> & InputStream)
 {
 	auto lastButtons = InputStream.Last().ContainedButtons;
@@ -483,19 +410,11 @@ void UStateMachineBase::QueueState(UStateBase * DestiantionState, FStateLink One
 {
 	//When We Switch state we reset a timer based on animation
 	//We also return out of this function
-	//CurrentState =StateToSwitchTo
+	//CurrentState = StateToSwitchTo
 
 	if (DestiantionState != nullptr)
 	{
-			//Cast<ABladeBreakerCharacter>(BBCharacter)->SetCurrentState(DestiantionState);
-
-			/*if (BBCharacter->GetCurrentState() == BBCharacter->GetDefaultState())
-			{
-				BBCharacter->SetCurrentState(DestiantionState);
-			}
-			else*/
-			//if ((ThisStatesMove) && OneStateLink.DontUseNotifyStateSwitching == true)
-			if (OneStateLink.DontUseNotifyStateSwitching == true)
+			if (OneStateLink.UseNotifyStateSwitching == false)
 			{
 				MyCharacter->SetCurrentState(DestiantionState);
 			}
