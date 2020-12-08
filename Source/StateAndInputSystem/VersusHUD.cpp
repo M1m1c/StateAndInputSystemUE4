@@ -33,6 +33,7 @@ void AVersusHUD::LoadVersusHUD(APlayerController* player1)
 
 	if (player1 == nullptr)
 	{
+		UE_LOG(LogTemp, Error, TEXT("%s @LoadVersusHUD no player to add hud to"), *GetName());
 		return;
 	}
 

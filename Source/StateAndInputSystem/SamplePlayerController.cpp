@@ -34,7 +34,7 @@ void ASamplePlayerController::BeginPlay()
 
 	myCharacter = Cast<ASampleCharacter>(GetPawn());
 
-	bActivated = true;
+	//bActivated = true;
 }
 
 void ASamplePlayerController::InitaliseButtonAtoms()
@@ -353,6 +353,7 @@ void ASamplePlayerController::AddInputToInputStream(FString & DebuggInpputStream
 			InputStream.Add(CurrentInputFrame);
 			UE_LOG(LogTemp, Warning, TEXT("Input stream: %s"), *DebuggInpputStream);
 		}
+		OnInputStreamUpdate.Broadcast(this);
 	}
 }
 

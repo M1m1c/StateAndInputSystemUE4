@@ -15,6 +15,8 @@ class STATEANDINPUTSYSTEM_API AStateAndInputSystemGameModeBase : public AGameMod
 	GENERATED_BODY()
 	
 	
-	
+protected:
+
+	virtual void BeginPlay() override;
 	
 };
