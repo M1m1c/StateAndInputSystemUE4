@@ -70,7 +70,7 @@ UInputFrameWidget* UInputStreamWidget::ConstructFrameWidget(
 {
 	auto frameWidget = CreateWidget<UInputFrameWidget>(player, inputFrameWidgetClass);
 	frameWidget->Setup();
-	/*auto slots = frameWidget->Slots;
+	auto slots = frameWidget->Slots;
 	bool directionDone = false;
 
 	for (int32 i = 0; i < slots.Num(); i++)
@@ -108,14 +108,14 @@ UInputFrameWidget* UInputStreamWidget::ConstructFrameWidget(
 
 		if (inputImage->Brush.GetResourceObject() == nullptr)
 			slots[i]->InputImage->SetOpacity(0.0f);
-	}*/
+	}
 
 	return frameWidget;
 }
 
 void UInputStreamWidget::SetDirectionalTexture(FInputFrame & inputFrame, UImage * inputImage)
 {
-	/*switch (inputFrame.DirectionalInput)
+	switch (inputFrame.DirectionalInput)
 	{
 	case EInputDirections::Up:
 		inputImage->Brush.SetResourceObject(UITextureCollection->Img_Input_UpDirection);
@@ -141,13 +141,13 @@ void UInputStreamWidget::SetDirectionalTexture(FInputFrame & inputFrame, UImage 
 	case EInputDirections::Right:
 		inputImage->Brush.SetResourceObject(UITextureCollection->Img_Input_RightDirection);
 		break;
-	}*/
+	}
 }
 
 UImage* UInputStreamWidget::SetActiveButton(FInputFrame & inputFrame, UImage * inputImage, EInputButtons inputButton)
 {
 	UImage* image = inputImage;
-	/*image->Brush.TintColor = FSlateColor(FLinearColor(0.5f, 0.5f, 0.5f, 0.3f));
+	image->Brush.TintColor = FSlateColor(FLinearColor(0.5f, 0.5f, 0.5f, 0.3f));
 	if (inputFrame.ContainedButtons.Num())
 	{
 		for (int32 g = 0; g < inputFrame.ContainedButtons.Num(); g++)
@@ -200,20 +200,20 @@ UImage* UInputStreamWidget::SetActiveButton(FInputFrame & inputFrame, UImage * i
 				break;
 			}
 		}
-	}*/
+	}
 	return image;
 }
 
 UImage * UInputStreamWidget::SetButtonTexture(UImage * image, FInputButtonStruct & button, UTexture * pressed, UTexture * held, UTexture * released)
 {
 	auto img = image;
-	/*if (button.ButtonState == EButtonState::HeldDown)
+	if (button.ButtonState == EButtonState::HeldDown)
 	{
 		img->Brush.SetResourceObject(held);
 	}
 	else if (button.ButtonState == EButtonState::Released)
 	{
 		img->Brush.SetResourceObject(released);
-	}*/
+	}
 	return img;
 }
