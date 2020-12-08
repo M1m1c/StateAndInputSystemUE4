@@ -7,12 +7,10 @@
 #include "InputClasses.h"
 #include "SamplePlayerController.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputStreamUIDelegate, ASamplePlayerController*, player);
 
 class UInputButtonClass;
-class ABladeBreakerCharacter;
+class ASampleCharacter;
 
 UENUM(Blueprintable, Meta = (Bitflags))
 enum class EAxisDirections : uint8 {
@@ -31,6 +29,8 @@ class  STATEANDINPUTSYSTEM_API ASamplePlayerController : public APlayerControlle
 
 public:
 	
+	FInputStreamUIDelegate OnInputStreamUpdate;
+
 	float DebuggTimer;
 	float StickSensitivityThreshold = 0.45f;
 
@@ -129,7 +129,7 @@ private:
 
 	UInputButtonClass* GetInputButtonPressed(EInputButtons ButtonInput);
 
-	class ASampleCharacter* myCharacter;
+	ASampleCharacter* myCharacter;
 
 	int32 DirectionFlags = 0;
 	int32 PreviousDirection = 0;
