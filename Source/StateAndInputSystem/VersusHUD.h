@@ -23,12 +23,20 @@ public:
 	UFUNCTION()
 	void UpdateInputStream(class ASamplePlayerController * player);
 
+	UFUNCTION()
+	void UpdateStateInfo(FText stateNameText,class UStateParametersBase * params);
+
 protected:
 	class UClass * InputStreamWidgetClass;
 	class UInputStreamWidget * InputStreamWidget;
 
+	class UClass * StateInfoWidgetClass;
+	class UStateInfoWidget * StateInfoWidget;
+
 	class UClass * InputFrameWidgetClass;
 	bool AddInputStreamToView(class APlayerController* player);
+
+	bool AddStateInfoWidgetToView(class APlayerController* player);
 
 	UPROPERTY(EditAnywhere)
 	class UUITextureCollection* UITextureCollection;
