@@ -118,8 +118,8 @@ public:
 
 	//TODO Change variable type to the correct variable once it is created.
 	//This is the move that is performed when this state is entered.
-	/*UPROPERTY(EditAnywhere)
-		class UBBMoveBase* ThisStatesMove;*/
+	UPROPERTY(EditAnywhere)
+		class UStateParametersBase* ThisStatesParams;
 
 	// This is a class that contains a list of StateLinks that should always be available in every move, such as jump, dodge and dash.
 	// Make sure to set up the list for each characters specific SharedLinks.

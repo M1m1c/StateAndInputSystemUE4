@@ -4,6 +4,7 @@
 #include "StateBase.h"
 #include "SampleCharacter.h"
 #include "SamplePlayerController.h"
+#include "StateParametersBase.h"
 //#include "BBSharedStateLinks.h"
 //#include "BBSpecialLinkCondition.h"
 
