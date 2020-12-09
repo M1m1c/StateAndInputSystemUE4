@@ -4,6 +4,7 @@
 #include "StateMachineBase.h"
 #include "StateBase.h"
 #include "InputClasses.h"
+#include "StateParametersBase.h"
 
 
 // Sets default values
@@ -60,6 +61,8 @@ void ASampleCharacter::SetCurrentState(UStateBase * NewState)
 	QuedState = nullptr;
 
 	bAllowQueuedStateSwitching = false;
+
+	OnStateInfoUpdate.Broadcast(FText::FromName(CurrentState->StateName), CurrentState->ThisStatesParams);
 
 	UE_LOG(LogTemp, Warning, TEXT("%s @SetCurrentState Switching state to: %s"), *GetName(), *NewState->StateName.ToString());
 }

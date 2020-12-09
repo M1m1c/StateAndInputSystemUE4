@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "SampleCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStateInfoUIDelegate, FText, stateNameText, class UStateParametersBase *,params);
+
 class UStateBase;
 
 UCLASS()
@@ -14,6 +16,8 @@ class STATEANDINPUTSYSTEM_API ASampleCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
+	FStateInfoUIDelegate OnStateInfoUpdate;
+
 	// Sets default values for this character's properties
 	ASampleCharacter(const FObjectInitializer& ObjectInitializer);
 
