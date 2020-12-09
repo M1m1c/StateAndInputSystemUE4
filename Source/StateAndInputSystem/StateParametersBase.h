@@ -14,7 +14,13 @@ class STATEANDINPUTSYSTEM_API UStateParametersBase : public UDataAsset
 {
 	GENERATED_BODY()
 	
+public:
+
+	UPROPERTY(EditAnywhere)
+		int32 Damage;
 	
+	UPROPERTY(EditAnywhere)
+		FName Info;
 	
 	
 };
