@@ -96,17 +96,12 @@ bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<F
 				return retflag;
 			}
 
-
-			switch (CheckOneStateLink(InputStream, StateLinksToCheck[i]))
+			if(CheckOneStateLink(InputStream, StateLinksToCheck[i]))
 			{
-			case EStateMachineCompletionType::Accepted:
 				Cast<ASamplePlayerController>(MyCharacter->GetController())->ClearInputStream();
 				UE_LOG(LogTemp, Warning, TEXT("@CheckStateLinks %s LINK Accepted"), *StateToSwitchTo->StateName.ToString());
 				QueueState(StateToSwitchTo, StateLinksToCheck[i]);
 				retflag = true;
-				return retflag;
-				break;
-			case EStateMachineCompletionType::NotAccepted:
 				break;
 			}
 		}
@@ -120,17 +115,17 @@ bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<F
 // This is the bulk of the state machine, this is where the comparison betwwen input stream and move conditions are made
 //Returns accepted if there is a match
 //returns not accepted if no match
-EStateMachineCompletionType UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream, FStateLink OneStateLink)
+bool UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream, FStateLink OneStateLink)
 {
 
-	EStateMachineCompletionType ReturnCompletionType = EStateMachineCompletionType::NotAccepted;
+	bool ReturnCompletionType = false;
 	int32 CorrectButtonInputs = 0;
 	int32 CorrectDirectionInputs = 0;
 
 	if (!OneStateLink.NextState)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%s @CheckOneStatelink One State Link had no next state to go to"), *GetName());
-		return EStateMachineCompletionType::NotAccepted;
+		return false;
 	}
 
 	auto amountOfButtonBitflags = CheckHowManyBitFlagsSet(OneStateLink.RequiredButtons.RequiredButton, (int32)EInputButtons::Count);
@@ -144,11 +139,7 @@ EStateMachineCompletionType UStateMachineBase::CheckOneStateLink(const TArray<FI
 			(CorrectDirectionInputs + OneStateLink.MissTolerance) >= OneStateLink.RequieredDirections.Num())
 		{
 			StateToSwitchTo = OneStateLink.NextState;
-			ReturnCompletionType = EStateMachineCompletionType::Accepted;
-		}
-		else
-		{
-			ReturnCompletionType = EStateMachineCompletionType::NotAccepted;
+			ReturnCompletionType = true;
 		}
 	}
 	else if (amountOfButtonBitflags > 0 && !OneStateLink.RequieredDirections.Num())
@@ -158,11 +149,7 @@ EStateMachineCompletionType UStateMachineBase::CheckOneStateLink(const TArray<FI
 		if (CorrectButtonInputs == amountOfButtonBitflags)
 		{
 			StateToSwitchTo = OneStateLink.NextState;
-			ReturnCompletionType = EStateMachineCompletionType::Accepted;
-		}
-		else
-		{
-			ReturnCompletionType = EStateMachineCompletionType::NotAccepted;
+			ReturnCompletionType = true;
 		}
 	}
 	else if (OneStateLink.RequieredDirections.Num() > 0 && amountOfButtonBitflags <= 0)
@@ -172,17 +159,12 @@ EStateMachineCompletionType UStateMachineBase::CheckOneStateLink(const TArray<FI
 		if ((CorrectDirectionInputs + OneStateLink.MissTolerance) >= OneStateLink.RequieredDirections.Num())
 		{
 			StateToSwitchTo = OneStateLink.NextState;
-			ReturnCompletionType = EStateMachineCompletionType::Accepted;
-		}
-		else
-		{
-			ReturnCompletionType = EStateMachineCompletionType::NotAccepted;
+			ReturnCompletionType = true;
 		}
 	}
 	else
 	{
 		StateToSwitchTo = OneStateLink.NextState;
-		ReturnCompletionType = EStateMachineCompletionType::Accepted;
 	}
 
 	return ReturnCompletionType;

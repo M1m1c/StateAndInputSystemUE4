@@ -10,12 +10,7 @@
 
 class ASampleCharacter;
 
-UENUM()
-enum class EStateMachineCompletionType : uint8
-{
-	NotAccepted,
-	Accepted,
-};
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class STATEANDINPUTSYSTEM_API UStateMachineBase : public UActorComponent
@@ -48,7 +43,7 @@ private:
 	bool CheckStateLinks(FString currentStateName, const TArray<FInputFrame> & InputStream, TArray<FStateLink> StateLinksToCheck);
 
 	// Checks one state link and returns a state machine completion type if the input matches the conditions
-	virtual EStateMachineCompletionType CheckOneStateLink( const TArray<FInputFrame> &InputStream, FStateLink OneStateLink);
+	virtual bool CheckOneStateLink( const TArray<FInputFrame> &InputStream, FStateLink OneStateLink);
 
 	int32 FindRequiredDirectionsInInputStream(FStateLink &OneStateLink, const TArray<FInputFrame> & InputStream, bool allowButtons);
 
