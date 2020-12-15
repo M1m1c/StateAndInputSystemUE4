@@ -22,15 +22,15 @@ void UStateMachineBase::BeginPlay()
 	Super::BeginPlay();
 	MyCharacter = Cast<ASampleCharacter>(this->GetOwner());
 
-	if (!MyCharacter) 
-	{ 
+	if (!MyCharacter)
+	{
 		UE_LOG(LogTemp, Error, TEXT("%s @BeginPlay failed to cast owner to ASampleCharacter, destroying this component"), *GetName());
-		this->DestroyComponent(); 
+		this->DestroyComponent();
 	}
 
 	DefaultLink.NextState = MyCharacter->GetDefaultState();
 	// ...
-	
+
 }
 
 //----------------------------------CHECK STATE LINKS---------------------------------------------------------------------------
@@ -102,7 +102,7 @@ bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<F
 			case EStateMachineCompletionType::Accepted:
 				Cast<ASamplePlayerController>(MyCharacter->GetController())->ClearInputStream();
 				UE_LOG(LogTemp, Warning, TEXT("@CheckStateLinks %s LINK Accepted"), *StateToSwitchTo->StateName.ToString());
-				QueueState( StateToSwitchTo, StateLinksToCheck[i]);
+				QueueState(StateToSwitchTo, StateLinksToCheck[i]);
 				retflag = true;
 				return retflag;
 				break;
@@ -120,7 +120,7 @@ bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<F
 // This is the bulk of the state machine, this is where the comparison betwwen input stream and move conditions are made
 //Returns accepted if there is a match
 //returns not accepted if no match
-EStateMachineCompletionType UStateMachineBase::CheckOneStateLink( const TArray<FInputFrame> &InputStream, FStateLink OneStateLink)
+EStateMachineCompletionType UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream, FStateLink OneStateLink)
 {
 
 	EStateMachineCompletionType ReturnCompletionType = EStateMachineCompletionType::NotAccepted;
@@ -196,6 +196,7 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 	int32 FirstDirInputIndex = 0;
 	int32 LastDirInputIndex = InputStream.Num();
 	int32 TempReturnIndex = 0;
+	//TODO bör nog enegentligen gångras med deltatime istället för et tkonstant värde
 	float sequenceLengthFail = (float)OneStateLink.SequenceLengthFailThreshold * 0.016f;
 	float LastTimeStamp = InputStream.Last().TimeStamp;
 	int32 frameGapFail = OneStateLink.FrameGapFailThreshold;
@@ -298,39 +299,48 @@ bool UStateMachineBase::FoundRequiredDirectionIndexInInputStream(
 		{
 			break;
 		}
-		
-
-		if (InputStream.IsValidIndex(i))
-		{
-			bool isThisInputNotFoundYet = TempRequierdDirections[RequiredDirIndex].FoundThisDirInput == false;
-			if (isThisInputNotFoundYet)
-			{
-				bool isRequiredDirectionInInputFrame = TempRequierdDirections[RequiredDirIndex].RequieredDirection & 1 << (int32)InputStream[i].DirectionalInput;
-				if (isRequiredDirectionInInputFrame)
-				{
-					if (LastTimeStamp >= InputStream[i].TimeStamp)
-					{
-						bool isInputFrameInSequenceLength = LastTimeStamp - InputStream[i].TimeStamp <= sequenceLengthFail;
-						if (isInputFrameInSequenceLength)
-						{
-							if (allowButtons && IsButtonInFrameJustPressed(InputStream[i]))
-							{
-								RetFlag = true;
-								TempReturnIndex = i;
-								break;
-							}
-							else if (InputStream[i].ContainedButtons.Num() == 0)
-							{
-								RetFlag = true;
-								TempReturnIndex = i;
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
 		InputStreamFrameCounter++;
+
+		if (!InputStream.IsValidIndex(i))
+		{
+			continue;
+		}
+
+		bool isThisInputAlreadyFound = TempRequierdDirections[RequiredDirIndex].FoundThisDirInput == true;
+		if (isThisInputAlreadyFound)
+		{
+			continue;
+		}
+
+		bool isRequiredDirectionNotInInputFrame = !(TempRequierdDirections[RequiredDirIndex].RequieredDirection & 1 << (int32)InputStream[i].DirectionalInput);
+		if (isRequiredDirectionNotInInputFrame)
+		{
+			continue;
+		}
+
+		if (!(LastTimeStamp >= InputStream[i].TimeStamp))
+		{
+			continue;
+		}
+
+		bool isInputFrameNotInSequenceLength = !(LastTimeStamp - InputStream[i].TimeStamp <= sequenceLengthFail);
+		if (isInputFrameNotInSequenceLength)
+		{
+			continue;
+		}
+
+		if (allowButtons && IsButtonInFrameJustPressed(InputStream[i]))
+		{
+			RetFlag = true;
+			TempReturnIndex = i;
+			break;
+		}
+		else if (InputStream[i].ContainedButtons.Num() == 0)
+		{
+			RetFlag = true;
+			TempReturnIndex = i;
+			break;
+		}	
 	}
 	return RetFlag;
 }
@@ -406,6 +416,7 @@ bool UStateMachineBase::DoesLastElementOfInputstreamContainAcitveButtons(const T
 }
 
 //----------------------------------QUEUE STATE---------------------------------------------------------------------------
+//TODO remove one statelink form parameter, itis not used here
 void UStateMachineBase::QueueState(UStateBase * DestiantionState, FStateLink OneStateLink)
 {
 	//When We Switch state we reset a timer based on animation
@@ -414,14 +425,14 @@ void UStateMachineBase::QueueState(UStateBase * DestiantionState, FStateLink One
 
 	if (DestiantionState != nullptr)
 	{
-			if (OneStateLink.UseNotifyStateSwitching == false)
-			{
-				MyCharacter->SetCurrentState(DestiantionState);
-			}
-			else
-			{
-				MyCharacter->QuedState = DestiantionState;
-			}
+		if (OneStateLink.UseNotifyStateSwitching == false)
+		{
+			MyCharacter->SetCurrentState(DestiantionState);
+		}
+		else
+		{
+			MyCharacter->QuedState = DestiantionState;
+		}
 
 
 	}
