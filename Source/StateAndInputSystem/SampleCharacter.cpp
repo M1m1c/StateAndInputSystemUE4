@@ -41,6 +41,7 @@ void ASampleCharacter::Tick(float DeltaTime)
 
 void ASampleCharacter::ForwardInputStreamToStateMachine(const TArray<struct FInputFrame>& InputStream)
 {
+	//TODO bör nog skicka in deltaTime som parameter också
 	MyStateMachine->CheckAllStateLinks(CurrentState, InputStream);
 }
 

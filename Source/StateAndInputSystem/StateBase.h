@@ -85,8 +85,8 @@ public:
 	UPROPERTY(EditAnywhere)
 		int32 FrameGapFailThreshold;
 
-	//Simple version: How many inputs can the player mess up but still succeed with.
-	//Detailed version:How many inputs of the requiered inputs that the player can miss and still progress with the link, the first and last input in an input sequence always need to be correct regardless of miss tolerance.
+	//Simple version: How many directional inputs can the player mess up but still succeed with.
+	//Detailed version:How many directional inputs of the requiered inputs that the player can miss and still progress with the link, the first and last input in an input sequence always need to be correct regardless of miss tolerance.
 	UPROPERTY(EditAnywhere)
 		int32 MissTolerance;
 
