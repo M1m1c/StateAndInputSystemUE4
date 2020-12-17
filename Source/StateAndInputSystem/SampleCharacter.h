@@ -35,6 +35,8 @@ protected:
 
 	bool bAllowQueuedStateSwitching = false;
 
+	float deltaTime = 0.016f;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

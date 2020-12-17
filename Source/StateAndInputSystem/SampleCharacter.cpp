@@ -35,14 +35,14 @@ void ASampleCharacter::BeginPlay()
 void ASampleCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	deltaTime = DeltaTime;
 	if (QuedState) { SetCurrentState(QuedState); }
 }
 
 void ASampleCharacter::ForwardInputStreamToStateMachine(const TArray<struct FInputFrame>& InputStream)
 {
 	//TODO bör nog skicka in deltaTime som parameter också
-	MyStateMachine->CheckAllStateLinks(CurrentState, InputStream);
+	MyStateMachine->CheckAllStateLinks(CurrentState, InputStream, deltaTime);
 }
 
 //----------------------------------SET CURRENT STATE---------------------------------------------------------------------------
