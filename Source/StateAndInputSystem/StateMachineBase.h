@@ -31,7 +31,7 @@ public:
 //TODO make sure that StateMachineBase has a permanent referne to its owner character, that wya the functions below don't have to take in the character
 
 // Loops through all state links in the state link list.
-	virtual void CheckAllStateLinks(UStateBase* currentState, const TArray<FInputFrame> &InputStream);
+	virtual void CheckAllStateLinks(UStateBase* currentState, const TArray<FInputFrame> &InputStream,float deltaTime);
 
 
 
@@ -81,5 +81,7 @@ private:
 	FStateLink DefaultLink;
 
 	ASampleCharacter* MyCharacter;
+
+	float DeltaTime;
 	
 };

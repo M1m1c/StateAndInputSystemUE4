@@ -36,9 +36,9 @@ void UStateMachineBase::BeginPlay()
 //----------------------------------CHECK STATE LINKS---------------------------------------------------------------------------
 //This is called in PlayerPawns tick function (Called each frame), all it does is go through all possible moves from the current state to see if one is accepted.
 //Takes in a reference to the playerpawn, A list of all the inputs performed within a timespan, , all the StateLinks this state has to other states, 
-void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArray<FInputFrame> &InputStream)//, TArray<FStateLink> StateLinks)
+void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArray<FInputFrame> &InputStream, float deltaTime)//, TArray<FStateLink> StateLinks)
 {
-
+	
 	if (MyCharacter->QuedState != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%s @CheckStateLinks Allready has queued state returning, no need to check links"), *GetName());
@@ -53,7 +53,7 @@ void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArra
 			if (DoesLastElementOfInputstreamContainAcitveButtons(InputStream))
 			{
 				StateToSwitchTo = nullptr;
-
+				DeltaTime = deltaTime;
 				// SET LINKS
 				if (CheckStateLinks(currentState->StateName.ToString(), InputStream, currentState->StateLinks)) return;
 
@@ -179,7 +179,7 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 	int32 LastDirInputIndex = InputStream.Num();
 	int32 TempReturnIndex = 0;
 	//TODO bör nog enegentligen gångras med deltatime istället för et tkonstant värde
-	float sequenceLengthFail = (float)OneStateLink.SequenceLengthFailThreshold * 0.016f;
+	float sequenceLengthFail = (float)OneStateLink.SequenceLengthFailThreshold * DeltaTime;// 0.016f;
 	float LastTimeStamp = InputStream.Last().TimeStamp;
 	int32 frameGapFail = OneStateLink.FrameGapFailThreshold;
 
