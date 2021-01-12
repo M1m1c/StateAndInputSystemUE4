@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// © 2018, Ludvig Baummann Olsson. All rights reserved.
 
 #include "StateMachineBase.h"
 #include "SampleCharacter.h"
@@ -8,11 +8,7 @@
 // Sets default values for this component's properties
 UStateMachineBase::UStateMachineBase()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
-	// ...
 }
 
 
@@ -29,8 +25,6 @@ void UStateMachineBase::BeginPlay()
 	}
 
 	DefaultLink.NextState = MyCharacter->GetDefaultState();
-	// ...
-
 }
 
 //----------------------------------CHECK STATE LINKS---------------------------------------------------------------------------
@@ -46,7 +40,6 @@ void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArra
 	}
 
 	if (currentState->StateLinks.Num())
-		// || (SharedStateLinks && SharedStateLinks->StateLinks.Num())
 	{
 		if (InputStream.Num())
 		{
@@ -56,25 +49,26 @@ void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArra
 				DeltaTime = deltaTime;
 				// SET LINKS
 				if (CheckStateLinks(currentState->StateName.ToString(), InputStream, currentState->StateLinks)) return;
-
-				// SHARED LINKS					
-				/*if (SharedStateLinks)
-				{
-					if (CheckStateLinks(Character, InputStream, SharedStateLinks->StateLinks)) return;
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("%s @CheckStateLinks No SharedLinks Set"), *GetName());
-				}*/
 			}
 		}
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("%s @CheckStateLinks had no StateLinks returning to default state"), *GetName());
-		//QueueState( MyCharacter->GetDefaultState(), DefaultLink);
 		return;
 	}
+}
+
+int32 UStateMachineBase::CheckHowManyBitFlagsSet(int32 FlagsToCheck, int32 EnumCount)
+{
+	int32 ReturnValue = 0;
+	for (int32 i = 0; i < EnumCount; i++)
+	{
+		if (FlagsToCheck & 1 << i)
+		{
+			ReturnValue++;
+		}
+	}
+	return ReturnValue;
 }
 
 bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<FInputFrame> & InputStream, TArray<FStateLink> StateLinksToCheck)
@@ -170,6 +164,53 @@ bool UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream
 	return ReturnCompletionType;
 }
 
+bool UStateMachineBase::DoesLastElementOfInputstreamContainAcitveButtons(const TArray<FInputFrame> & InputStream)
+{
+	auto lastButtons = InputStream.Last().ContainedButtons;
+	for (int32 i = 0; i < lastButtons.Num(); i++)
+	{
+		if (lastButtons.IsValidIndex(i))
+		{
+			if (lastButtons[i].ButtonState != EButtonState::Up &&
+				lastButtons[i].ButtonState != EButtonState::Up &&
+				lastButtons[i].ButtonState != EButtonState::Count)
+			{
+				return true;
+			}
+		}
+
+	}
+	return false;
+}
+
+//Takes the last inputframe's buttons and compares them to the buttons set as requirements in OneStateLink.
+//Returns amount of correct buttons that were found. 
+int32 UStateMachineBase::FindRequiredButtonsInInputStream(const TArray<FInputFrame> & InputStream, FStateLink &OneStateLink)
+{
+	int correctButtons = 0;
+	auto frameButtons = InputStream.Last().ContainedButtons;
+	for (int32 z = 0; z < frameButtons.Num(); z++)
+	{
+		if (frameButtons.IsValidIndex(z))
+		{
+			auto requiredButtons = OneStateLink.RequiredButtons;
+			auto amountOfBitFlags = CheckHowManyBitFlagsSet(requiredButtons.RequiredButton, (int32)EInputButtons::Count);
+			for (int32 i = 0; i < amountOfBitFlags; i++)
+			{
+				if (requiredButtons.RequiredButton & 1 << (int32)frameButtons[z].ButtonInput)
+				{
+					if (requiredButtons.RequiredButtonState & 1 << (int32)frameButtons[z].ButtonState)
+					{
+						correctButtons++;
+						break;
+					}
+				}
+			}
+		}
+	}
+	return correctButtons;
+}
+
 int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStateLink, const TArray<FInputFrame> & InputStream, bool allowButtons)
 {
 	TArray<FLinkConditonDirection> TempRequierdDirections = OneStateLink.RequieredDirections;
@@ -178,8 +219,7 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 	int32 FirstDirInputIndex = 0;
 	int32 LastDirInputIndex = InputStream.Num();
 	int32 TempReturnIndex = 0;
-	//TODO bör nog enegentligen gångras med deltatime istället för et tkonstant värde
-	float sequenceLengthFail = (float)OneStateLink.SequenceLengthFailThreshold * DeltaTime;// 0.016f;
+	float sequenceLengthFail = (float)OneStateLink.SequenceLengthFailThreshold * DeltaTime;
 	float LastTimeStamp = InputStream.Last().TimeStamp;
 	int32 frameGapFail = OneStateLink.FrameGapFailThreshold;
 
@@ -345,66 +385,10 @@ bool UStateMachineBase::IsButtonInFrameJustPressed(const FInputFrame & InputFram
 	return retflag;
 }
 
-int32 UStateMachineBase::SetFoundCorrectDirectional(int32 CorrectDirectionalInputs, int32 Index, TArray<FLinkConditonDirection> &TempRequierdDirections)
-{
-	TempRequierdDirections[Index].FoundThisDirInput = true;
-	return CorrectDirectionalInputs += 1;
-}
-
-int32 UStateMachineBase::FindRequiredButtonsInInputStream(const TArray<FInputFrame> & InputStream, FStateLink &OneStateLink)
-{
-	int correctButtons = 0;
-	auto buttons = InputStream.Last().ContainedButtons;
-	for (int32 z = 0; z < buttons.Num(); z++)
-	{
-		if (buttons.IsValidIndex(z))
-		{
-			auto requiredButtons = OneStateLink.RequiredButtons;
-			auto amountOfBitFlags = CheckHowManyBitFlagsSet(requiredButtons.RequiredButton, (int32)EInputButtons::Count);
-			for (int32 i = 0; i < amountOfBitFlags; i++)
-			{
-				if (requiredButtons.RequiredButton & 1 << (int32)buttons[z].ButtonInput)
-				{
-					if (requiredButtons.RequiredButtonState & 1 << (int32)buttons[z].ButtonState)
-					{
-						correctButtons++;
-						break;
-					}
-
-				}
-			}
-		}
-	}
-	return correctButtons;
-}
-
-bool UStateMachineBase::DoesLastElementOfInputstreamContainAcitveButtons(const TArray<FInputFrame> & InputStream)
-{
-	auto lastButtons = InputStream.Last().ContainedButtons;
-	for (int32 i = 0; i < lastButtons.Num(); i++)
-	{
-		if (lastButtons.IsValidIndex(i))
-		{
-			if (lastButtons[i].ButtonState != EButtonState::Up &&
-				lastButtons[i].ButtonState != EButtonState::Up &&
-				lastButtons[i].ButtonState != EButtonState::Count)
-			{
-				return true;
-			}
-		}
-
-	}
-	return false;
-}
-
 //----------------------------------QUEUE STATE---------------------------------------------------------------------------
-//TODO remove one statelink form parameter, itis not used here
+//TODO remove one statelink form parameter, it is not used here
 void UStateMachineBase::QueueState(UStateBase * DestiantionState, FStateLink OneStateLink)
 {
-	//When We Switch state we reset a timer based on animation
-	//We also return out of this function
-	//CurrentState = StateToSwitchTo
-
 	if (DestiantionState != nullptr)
 	{
 		if (OneStateLink.UseNotifyStateSwitching == false)
@@ -415,8 +399,6 @@ void UStateMachineBase::QueueState(UStateBase * DestiantionState, FStateLink One
 		{
 			MyCharacter->QuedState = DestiantionState;
 		}
-
-
 	}
 	else
 	{
@@ -425,16 +407,11 @@ void UStateMachineBase::QueueState(UStateBase * DestiantionState, FStateLink One
 	}
 }
 
-int32 UStateMachineBase::CheckHowManyBitFlagsSet(int32 FlagsToCheck, int32 EnumCount)
+int32 UStateMachineBase::SetFoundCorrectDirectional(int32 CorrectDirectionalInputs, int32 Index, TArray<FLinkConditonDirection> &TempRequierdDirections)
 {
-	int32 ReturnValue = 0;
-	for (int32 i = 0; i < EnumCount; i++)
-	{
-		if (FlagsToCheck & 1 << i)
-		{
-			ReturnValue++;
-		}
-	}
-	return ReturnValue;
+	TempRequierdDirections[Index].FoundThisDirInput = true;
+	return CorrectDirectionalInputs += 1;
 }
+
+
 

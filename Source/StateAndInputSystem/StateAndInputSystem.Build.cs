@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// © 2018, Ludvig Baummann Olsson. All rights reserved.
 
 using UnrealBuildTool;
 
