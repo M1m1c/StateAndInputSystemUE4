@@ -27,7 +27,6 @@ void UStateMachineBase::BeginPlay()
 	DefaultLink.NextState = MyCharacter->GetDefaultState();
 }
 
-//----------------------------------CHECK STATE LINKS---------------------------------------------------------------------------
 //This is called in PlayerPawns tick function (Called each frame), all it does is go through all possible moves from the current state to see if one is accepted.
 //Takes in a reference to the playerpawn, A list of all the inputs performed within a timespan, , all the StateLinks this state has to other states, 
 void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArray<FInputFrame> &InputStream, float deltaTime)//, TArray<FStateLink> StateLinks)
@@ -107,7 +106,6 @@ bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<F
 
 
 
-//----------------------------------CHECK ONE STATE LINK---------------------------------------------------------------------------
 // This is the bulk of the state machine, this is where the comparison betwwen input stream and move conditions are made
 //Returns accepted if there is a match
 //returns not accepted if no match
@@ -387,7 +385,6 @@ bool UStateMachineBase::IsButtonInFrameJustPressed(const FInputFrame & InputFram
 	return retflag;
 }
 
-//----------------------------------QUEUE STATE---------------------------------------------------------------------------
 void UStateMachineBase::QueueState(UStateBase * DestiantionState, FStateLink OneStateLink)
 {
 	if (DestiantionState != nullptr)

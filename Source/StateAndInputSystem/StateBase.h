@@ -21,9 +21,6 @@ struct STATEANDINPUTSYSTEM_API FLinkConditonButton
 		FLinkConditonButton() {}
 public:
 
-	//TODO Create variable to check if the index value is sequenced, 
-	//that is to say they are not supposed to be on the same frame so that button sequences can be required for a link
-
 	//Set the button that needs to be inputed , if buttons are supposed to be multiple input at the same time then add more entries in the RequierdButtons List.
 	UPROPERTY(EditAnywhere, Meta = (Bitmask, BitmaskEnum = "EInputButtons"))
 		int32 RequiredButton;
@@ -106,7 +103,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		FName StateName;
 
-	//TODO Change variable type to the correct variable once it is created.
 	//This is the move that is performed when this state is entered.
 	UPROPERTY(EditAnywhere)
 		class UStateParametersBase* ThisStatesParams;

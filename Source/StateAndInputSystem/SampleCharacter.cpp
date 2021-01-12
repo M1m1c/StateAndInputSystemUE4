@@ -43,7 +43,6 @@ void ASampleCharacter::ForwardInputStreamToStateMachine(const TArray<struct FInp
 	MyStateMachine->CheckAllStateLinks(CurrentState, InputStream, deltaTime);
 }
 
-//----------------------------------SET CURRENT STATE---------------------------------------------------------------------------
 //Sets the current state to the new state
 void ASampleCharacter::SetCurrentState(UStateBase * NewState)
 {
@@ -65,12 +64,11 @@ void ASampleCharacter::SetCurrentState(UStateBase * NewState)
 	//An example could be to run initalise state in order to play a new animation on the character.
 }
 
-//----------------------------------GET CURRENT STATE---------------------------------------------------------------------------
 UStateBase * ASampleCharacter::GetCurrentState()
 {
 	return CurrentState;
 }
-//----------------------------------GET DEFAULT STATE---------------------------------------------------------------------------
+
 UStateBase* ASampleCharacter::GetDefaultState()
 {
 	return DefaultState;

@@ -35,7 +35,6 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		class UInputWidget * Slot_4;
 
-	//TODO assign this array to correspond with bthe above slots as soon as this is instantiated
 	TArray<class UInputWidget*> Slots;
 
 };

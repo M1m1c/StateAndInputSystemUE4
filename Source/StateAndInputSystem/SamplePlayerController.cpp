@@ -11,7 +11,6 @@ ASamplePlayerController::ASamplePlayerController()
 {
 }
 
-//----------------------------------BEGIN PLAY---------------------------------------------------------------------------
 void ASamplePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -84,7 +83,6 @@ void ASamplePlayerController::InitaliseButtonAtoms()
 	}
 }
 
-//----------------------------------SETUP INPUT COMPONENT---------------------------------------------------------------------------
 void ASamplePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -114,7 +112,6 @@ void ASamplePlayerController::SetupInputComponent()
 }
 
 
-//----------------------------------TICK---------------------------------------------------------------------------
 void ASamplePlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -175,7 +172,6 @@ void ASamplePlayerController::AxisDirectionToggle(float axis, int32 possitiveDir
 	}
 }
 
-//----------------------------------CALUCLATE DIRECTIONAL INPUT---------------------------------------------------------------------------
 void ASamplePlayerController::CalculateDirectionalInput()
 {
 	if (PreviousDirection != DirectionFlags)
@@ -233,7 +229,6 @@ void ASamplePlayerController::CalculateDirectionalInput()
 	}
 }
 
-//----------------------------------CALCULATE BUTTON INPUT---------------------------------------------------------------------------
 //Measures the state of buttons and adds them to the input stream
 void ASamplePlayerController::CalculateButtonInput()
 {
@@ -327,7 +322,6 @@ void ASamplePlayerController::AddInputToInputStream()
 	}
 }
 
-//----------------------------------REMOVE OLD INPUT ATOMS---------------------------------------------------------------------------
 //Removes inputs in the input stream that have lived to the expiration time.
 void ASamplePlayerController::RemoveOldInputAtoms()
 {
@@ -355,7 +349,6 @@ void ASamplePlayerController::RemoveOldInputAtoms()
 
 }
 
-//----------------------------------DOES BUTTON ATOMS HAVE ACTIVE BUTTONS---------------------------------------------------------------------------
 bool ASamplePlayerController::DoesButtonAtomsHaveActiveButtons()
 {
 	bool retflag = false;
@@ -373,7 +366,6 @@ bool ASamplePlayerController::DoesButtonAtomsHaveActiveButtons()
 	return retflag;
 }
 
-//----------------------------------IS A BUTTON HELD IN INPUTSTREAM---------------------------------------------------------------------------
 bool ASamplePlayerController::IsAButtonHeldInInputStream()
 {
 	bool retflag = false;
@@ -390,7 +382,6 @@ bool ASamplePlayerController::IsAButtonHeldInInputStream()
 	return retflag;
 }
 
-//----------------------------------IS A BUTTON ALREADY HELD---------------------------------------------------------------------------
 bool ASamplePlayerController::IsACurrentButtonHeldInArray(TArray<FInputButtonStruct>& frameButtons)
 {
 	bool retflag = false;
@@ -416,7 +407,6 @@ bool ASamplePlayerController::IsACurrentButtonHeldInArray(TArray<FInputButtonStr
 	return retflag;
 }
 
-//----------------------------------FIND SPECIFIC BUTTON IN ARRAY---------------------------------------------------------------------------
 UInputButtonClass* ASamplePlayerController::FindSpecificButtonInArray(TArray<UInputButtonClass*>& collection, EInputButtons button)
 {
 	return *collection.FindByPredicate([&](const UInputButtonClass* InItem)
@@ -425,7 +415,6 @@ UInputButtonClass* ASamplePlayerController::FindSpecificButtonInArray(TArray<UIn
 	});
 }
 
-//----------------------------------READ AXIS---------------------------------------------------------------------------
 void ASamplePlayerController::ReadYAxis(float value)
 {
 
@@ -440,7 +429,6 @@ void ASamplePlayerController::ReadXAxis(float value)
 
 }
 
-//----------------------------------CLEAR INPUT STREAM---------------------------------------------------------------------------
 //Clears the input stream when called
 void ASamplePlayerController::ClearInputStream()
 {
@@ -448,7 +436,6 @@ void ASamplePlayerController::ClearInputStream()
 	InputStream.Empty();
 }
 
-//----------------------------------CONSUME ONE INPUT---------------------------------------------------------------------------
 //Removes one input in the input stream
 void ASamplePlayerController::ConsumeOneInput(int32 InputListPosition)
 {
@@ -465,7 +452,6 @@ void ASamplePlayerController::ConsumeOneInput(int32 InputListPosition)
 
 }
 
-//----------------------------------GET INPUT STREAM REFERENCE---------------------------------------------------------------------------
 TArray<FInputFrame>& ASamplePlayerController::GetInputStreamReference()
 {
 	return InputStream;;
@@ -502,7 +488,6 @@ UInputButtonClass * ASamplePlayerController::ReleaseButton(EInputButtons type, f
 	return retValue;
 }
 
-//----------------------------------LEFT FACE BUTTON---------------------------------------------------------------------------
 void ASamplePlayerController::LeftFaceButtonPressed()
 {
 	DebuggTimer = 0;
@@ -516,7 +501,6 @@ void ASamplePlayerController::LeftFaceButtonReleased()
 	LeftFaceButton = ReleaseButton(EInputButtons::LeftFace, TimeWhenEntered);
 }
 
-//----------------------------------TOP FACE BUTTON---------------------------------------------------------------------------
 void ASamplePlayerController::TopFaceButtonPressed()
 {
 	DebuggTimer = 0;
@@ -530,7 +514,6 @@ void ASamplePlayerController::TopFaceButtonReleased()
 	TopFaceButton = ReleaseButton(EInputButtons::TopFace, TimeWhenEntered);
 }
 
-//----------------------------------RIGHT FACE BUTTON---------------------------------------------------------------------------
 void ASamplePlayerController::RightFaceButtonPressed()
 {
 	DebuggTimer = 0;
@@ -544,7 +527,6 @@ void ASamplePlayerController::RightFaceButtonReleased()
 	RightFaceButton = ReleaseButton(EInputButtons::RightFace, TimeWhenEntered);
 }
 
-//----------------------------------BOTTOM FACE BUTTON---------------------------------------------------------------------------
 void ASamplePlayerController::BottomFaceButtonPressed()
 {
 	DebuggTimer = 0;
@@ -558,7 +540,6 @@ void ASamplePlayerController::BottomFaceButtonReleased()
 	BottomFaceButton = ReleaseButton(EInputButtons::BottomFace, TimeWhenEntered);
 }
 
-//----------------------------------RIGHT BUMPER---------------------------------------------------------------------------
 void ASamplePlayerController::RightBumperPressed()
 {
 	DebuggTimer = 0;
@@ -572,7 +553,6 @@ void ASamplePlayerController::RightBumperReleased()
 	RightBumper = ReleaseButton(EInputButtons::RightBumper, TimeWhenEntered);
 }
 
-//----------------------------------LEFT BUMPER---------------------------------------------------------------------------
 void ASamplePlayerController::LeftBumperPressed()
 {
 	DebuggTimer = 0;
@@ -587,7 +567,6 @@ void ASamplePlayerController::LeftBumperReleased()
 }
 
 
-//----------------------------------GET INPUT BUTTON PRESSED---------------------------------------------------------------------------
 //Gets the UInputButtonClass of the button sent in
 UInputButtonClass * ASamplePlayerController::GetInputButtonPressed(EInputButtons ButtonInput)
 {
