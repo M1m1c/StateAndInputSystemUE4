@@ -48,8 +48,10 @@ void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArra
 				StateToSwitchTo = nullptr;
 				DeltaTime = deltaTime;
 				// SET LINKS
-				if (CheckStateLinks(currentState->StateName.ToString(), InputStream, currentState->StateLinks)) return;
+				if (CheckStateLinks(currentState->StateName.ToString(), InputStream, currentState->StateLinks)) return;			
 			}
+
+			//Here one could call CheckStateLinks for different collections of links, such as ones that don't require buttons.
 		}
 	}
 	else
@@ -386,7 +388,6 @@ bool UStateMachineBase::IsButtonInFrameJustPressed(const FInputFrame & InputFram
 }
 
 //----------------------------------QUEUE STATE---------------------------------------------------------------------------
-//TODO remove one statelink form parameter, it is not used here
 void UStateMachineBase::QueueState(UStateBase * DestiantionState, FStateLink OneStateLink)
 {
 	if (DestiantionState != nullptr)

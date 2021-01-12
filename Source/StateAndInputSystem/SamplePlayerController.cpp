@@ -33,8 +33,6 @@ void ASamplePlayerController::BeginPlay()
 	}
 
 	myCharacter = Cast<ASampleCharacter>(GetPawn());
-
-	//bActivated = true;
 }
 
 void ASamplePlayerController::InitaliseButtonAtoms()
@@ -81,7 +79,6 @@ void ASamplePlayerController::InitaliseButtonAtoms()
 			TempInputAtom->ButtonState = EButtonState::Up;
 			break;
 		}
-		//maybe we need to register tempinput atom before we add it to the list
 		ButtonAtoms.Add(TempInputAtom);
 		TempInputAtom = NULL;
 	}
@@ -93,9 +90,6 @@ void ASamplePlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	UE_LOG(LogTemp, Warning, TEXT("%s @SetupInputComponent was called"), *GetName());
-
-	//InputComponent->BindAxis("XAxis", this, &ASamplePlayerController::ReadXAxis);
-	//InputComponent->BindAxis("YAxis", this, &ASamplePlayerController::ReadYAxis);
 
 	InputComponent->BindAxis("LeftStickValue_Y", this, &ASamplePlayerController::ReadYAxis);
 	InputComponent->BindAxis("LeftStickValue_X", this, &ASamplePlayerController::ReadXAxis);
@@ -136,22 +130,16 @@ void ASamplePlayerController::Tick(float DeltaSeconds)
 		CalculateDirectionalInput();
 
 		FString DebuggInpputStream = "";
-		CalculateButtonInput(DebuggInpputStream);
-		AddInputToInputStream(DebuggInpputStream);
+		CalculateButtonInput();
+		AddInputToInputStream();
 
 		RemoveOldInputAtoms();
 
-		//would like to move this to the character, however it seems that the game crashes if we try to cast the inout stream,
-		//the crash is really weird too, since there is not error message and the engien does not close it self, so it is like an uncaught nullptr
 		if (myCharacter == nullptr)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("%s @Tick my pawn was null"), *GetName());
 			return;
 		}
-
-	/*	myCharacter->MoveYAxis(YAxis);
-		myCharacter->MoveXAxis(XAxis);
-		myCharacter->SetDirectionMagnitude(XAxis);*/
 
 		if (myCharacter->GetCurrentState() == nullptr)
 		{
@@ -162,18 +150,13 @@ void ASamplePlayerController::Tick(float DeltaSeconds)
 		myCharacter->ForwardInputStreamToStateMachine(InputStream);
 		
 	}
-	else
-	{
-	/*	myCharacter->MoveYAxis(0.0f);
-		myCharacter->MoveXAxis(0.0f);*/
-	}
 }
 
 void ASamplePlayerController::AxisDirectionToggle(float axis, int32 possitiveDirectionBit, int32 negativeDirectionBit)
 {
 	if (axis > StickSensitivityThreshold)
 	{
-		//axis is possitive toggle bit in enum
+		//axis is positive toggle bit in enum
 		DirectionFlags |= 1 << possitiveDirectionBit;
 		DirectionFlags &= ~(1 << negativeDirectionBit);
 
@@ -186,7 +169,7 @@ void ASamplePlayerController::AxisDirectionToggle(float axis, int32 possitiveDir
 	}
 	else
 	{
-		//axis is not large enought to count as an input
+		//axis is not large enough to count as an input
 		DirectionFlags &= ~(1 << negativeDirectionBit);
 		DirectionFlags &= ~(1 << possitiveDirectionBit);
 	}
@@ -204,7 +187,6 @@ void ASamplePlayerController::CalculateDirectionalInput()
 		{
 		case 0:
 			//no direction is being input
-			//UE_LOG(LogTemp, Warning, TEXT("No Direction"));
 			CurrentInputFrame.DirectionalInput = EInputDirections::None;
 			break;
 		case (1 << (int32)EAxisDirections::XPossitive):
@@ -227,34 +209,33 @@ void ASamplePlayerController::CalculateDirectionalInput()
 			UE_LOG(LogTemp, Warning, TEXT("Down Direction"));
 			CurrentInputFrame.DirectionalInput = EInputDirections::Down;
 			break;
-			case (1 << (int32)EAxisDirections::XPossitive) + (1 << (int32)EAxisDirections::YPossitive) :
-				//UpRight direction
-				UE_LOG(LogTemp, Warning, TEXT("UpRight Direction"));
-				CurrentInputFrame.DirectionalInput = EInputDirections::UpRight;
-				break;
-				case (1 << (int32)EAxisDirections::XPossitive) + (1 << (int32)EAxisDirections::YNegative) :
-					//DownRight direction
-					UE_LOG(LogTemp, Warning, TEXT("DownRight Direction"));
-					CurrentInputFrame.DirectionalInput = EInputDirections::DownRight;
-					break;
-					case (1 << (int32)EAxisDirections::XNegative) + (1 << (int32)EAxisDirections::YPossitive) :
-						//UpLeft direction
-						UE_LOG(LogTemp, Warning, TEXT("UpLeft Direction"));
-						CurrentInputFrame.DirectionalInput = EInputDirections::UpLeft;
-						break;
-						case (1 << (int32)EAxisDirections::XNegative) + (1 << (int32)EAxisDirections::YNegative) :
-							//DownLeft direction
-							UE_LOG(LogTemp, Warning, TEXT("DownLeft Direction"));
-							CurrentInputFrame.DirectionalInput = EInputDirections::DownLeft;
-							break;
+		case (1 << (int32)EAxisDirections::XPossitive) + (1 << (int32)EAxisDirections::YPossitive) :
+			//UpRight direction
+			UE_LOG(LogTemp, Warning, TEXT("UpRight Direction"));
+			CurrentInputFrame.DirectionalInput = EInputDirections::UpRight;
+			break;
+		case (1 << (int32)EAxisDirections::XPossitive) + (1 << (int32)EAxisDirections::YNegative) :
+			//DownRight direction
+			UE_LOG(LogTemp, Warning, TEXT("DownRight Direction"));
+			CurrentInputFrame.DirectionalInput = EInputDirections::DownRight;
+			break;
+		case (1 << (int32)EAxisDirections::XNegative) + (1 << (int32)EAxisDirections::YPossitive) :
+			//UpLeft direction
+			UE_LOG(LogTemp, Warning, TEXT("UpLeft Direction"));
+			CurrentInputFrame.DirectionalInput = EInputDirections::UpLeft;
+			break;
+		case (1 << (int32)EAxisDirections::XNegative) + (1 << (int32)EAxisDirections::YNegative) :
+			//DownLeft direction
+			UE_LOG(LogTemp, Warning, TEXT("DownLeft Direction"));
+			CurrentInputFrame.DirectionalInput = EInputDirections::DownLeft;
+			break;
 		}
 	}
 }
 
-//TODO remove Debug Messages
 //----------------------------------CALCULATE BUTTON INPUT---------------------------------------------------------------------------
 //Measures the state of buttons and adds them to the input stream
-void ASamplePlayerController::CalculateButtonInput(FString DebuggInpputStream)
+void ASamplePlayerController::CalculateButtonInput()
 {
 	CurrentInputFrame.ContainedButtons.Reset();
 
@@ -265,7 +246,6 @@ void ASamplePlayerController::CalculateButtonInput(FString DebuggInpputStream)
 			break;
 		}
 
-		DebuggInpputStream += "| " + ButtonAtoms[i]->DisplayName.ToString() + " State-";
 
 		auto previousButtonState = ButtonAtoms[i]->PreviousButtonState;
 		auto bButtonHolding = ButtonAtoms[i]->bButtonHolding;
@@ -281,7 +261,6 @@ void ASamplePlayerController::CalculateButtonInput(FString DebuggInpputStream)
 		{
 			ButtonAtoms[i]->PreviousButtonState = EButtonState::HeldDown;
 			ButtonAtoms[i]->ButtonState = EButtonState::HeldDown;
-			DebuggInpputStream += "HeldDown";
 
 		}
 		//Button Pushed
@@ -292,9 +271,6 @@ void ASamplePlayerController::CalculateButtonInput(FString DebuggInpputStream)
 			ButtonAtoms[i]->bButtonHolding = true;
 			ButtonAtoms[i]->PreviousButtonState = EButtonState::JustPressed;
 			ButtonAtoms[i]->ButtonState = EButtonState::JustPressed;
-			DebuggInpputStream += "JustPressed";
-
-
 		}
 		//Button Released
 		else if ((previousButtonState == EButtonState::JustPressed || 
@@ -305,20 +281,17 @@ void ASamplePlayerController::CalculateButtonInput(FString DebuggInpputStream)
 			ButtonAtoms[i]->ButtonState = EButtonState::Released;
 			ButtonAtoms[i]->PreviousButtonState = EButtonState::Released;
 
-			DebuggInpputStream += "Released";
 		}
 		//Button Up
 		else if (previousButtonState == EButtonState::Released)
 		{
-
 			ButtonAtoms[i]->ButtonState = EButtonState::Up;
 			ButtonAtoms[i]->PreviousButtonState = EButtonState::Up;
 			ButtonAtoms[i]->bButtonHolding = false;
 			ButtonAtoms[i]->bButtonPushedGate = true;
-			DebuggInpputStream += "Up";
-
 		}
-		// This is essentially an inbetween state, it is used to catch the button state when it is not pressed or held down and has not been released yet.
+		// This is essentially an inbetween state, it is used to catch the button state when it is not pressed or held down,
+		// and has not been released yet.
 		// A button in a Count state must never be added to the input stream or bad things might happen.
 		else
 		{
@@ -331,10 +304,9 @@ void ASamplePlayerController::CalculateButtonInput(FString DebuggInpputStream)
 			CurrentInputFrame.ContainedButtons.Add(FInputButtonStruct(ButtonAtoms[i]));
 		}
 	}
-
 }
 
-void ASamplePlayerController::AddInputToInputStream(FString & DebuggInpputStream)
+void ASamplePlayerController::AddInputToInputStream()
 {
 	if ((DoesButtonAtomsHaveActiveButtons() && !IsAButtonHeldInInputStream()) ||
 		(PassOneDirInput && CurrentInputFrame.DirectionalInput != (EInputDirections)0))
@@ -345,13 +317,11 @@ void ASamplePlayerController::AddInputToInputStream(FString & DebuggInpputStream
 		if (InputStream.Num() < InputBufferSize)
 		{
 			InputStream.Add(CurrentInputFrame);
-			UE_LOG(LogTemp, Warning, TEXT("Input stream: %s"), *DebuggInpputStream);
 		}
 		else
 		{
 			InputStream.RemoveAt(0, 1, false);
 			InputStream.Add(CurrentInputFrame);
-			UE_LOG(LogTemp, Warning, TEXT("Input stream: %s"), *DebuggInpputStream);
 		}
 		OnInputStreamUpdate.Broadcast(this);
 	}
@@ -500,8 +470,6 @@ TArray<FInputFrame>& ASamplePlayerController::GetInputStreamReference()
 {
 	return InputStream;;
 }
-
-
 
 UInputButtonClass* ASamplePlayerController::PressButton(EInputButtons type, float time)
 {

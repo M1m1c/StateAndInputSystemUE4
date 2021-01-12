@@ -51,15 +51,19 @@ public:
 protected:
 
 
+	//Measures the state of buttons and adds them to the input stream
+	void CalculateButtonInput();
 
-	void CalculateButtonInput(FString DebuggInpputStream);
-	void AddInputToInputStream(FString & DebuggInpputStream);
+	void AddInputToInputStream();
 
 	void RemoveOldInputAtoms();
 
-	void CalculateDirectionalInput();
-
+	//Called twice in tick, for X- and Y-Axis respectively.
+	//Toggles EAxisDirections DirectionFlags based on if axis is posiive, negative or neutral.
 	void AxisDirectionToggle(float axis, int32 possitiveDirectionBit, int32 negativeDirectionBit);
+
+	//Measures the state of directions based of the toggled bitflags in DirectionalFlags Variable
+	void CalculateDirectionalInput();
 
 	bool DoesButtonAtomsHaveActiveButtons();
 	bool IsAButtonHeldInInputStream();
@@ -101,16 +105,18 @@ protected:
 	UInputButtonClass* RightBumper;
 	UInputButtonClass* LeftBumper;
 
+	// How long an input frame lives for in seconds.
 	UPROPERTY(EditAnywhere)
 		float InputExpirationTime = 0.5f;
 
-	// the inputStream will never exceede this number
+	// The inputStream will never exceede this number.
 	UPROPERTY(EditAnywhere)
 		int32 InputBufferSize = 10;
 
 	UPROPERTY(VisibleAnywhere, Category = "Input Atoms")
 		TArray<UInputButtonClass*> ButtonAtoms;
 
+	// How long a player needs to hold down a button until it counts as being held.
 	UPROPERTY(EditAnywhere)
 		float TimeTilButtonHeldDown = 0.3f;
 

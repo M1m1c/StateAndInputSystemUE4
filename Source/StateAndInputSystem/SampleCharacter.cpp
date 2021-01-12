@@ -10,7 +10,6 @@
 // Sets default values
 ASampleCharacter::ASampleCharacter(const FObjectInitializer& ObjectInitializer)
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	MyStateMachine = ObjectInitializer.CreateDefaultSubobject<UStateMachineBase>(this, TEXT("StateMachine"));
@@ -41,12 +40,11 @@ void ASampleCharacter::Tick(float DeltaTime)
 
 void ASampleCharacter::ForwardInputStreamToStateMachine(const TArray<struct FInputFrame>& InputStream)
 {
-	//TODO bör nog skicka in deltaTime som parameter också
 	MyStateMachine->CheckAllStateLinks(CurrentState, InputStream, deltaTime);
 }
 
 //----------------------------------SET CURRENT STATE---------------------------------------------------------------------------
-//Sets the current state to the new state and initalizes the new state
+//Sets the current state to the new state
 void ASampleCharacter::SetCurrentState(UStateBase * NewState)
 {
 	if (NewState == nullptr)
@@ -54,11 +52,7 @@ void ASampleCharacter::SetCurrentState(UStateBase * NewState)
 			NewState = DefaultState;
 	}
 
-	//this->StopAnimMontage();
-	//this->GetCharacterMovement()->Velocity = FVector::ZeroVector;
-	//this->GetRootMotionAnimMontageInstance()->
 	CurrentState = NewState;
-	CurrentState->InitializeThisState(this);
 	QuedState = nullptr;
 
 	bAllowQueuedStateSwitching = false;
@@ -66,6 +60,9 @@ void ASampleCharacter::SetCurrentState(UStateBase * NewState)
 	OnStateInfoUpdate.Broadcast(FText::FromName(CurrentState->StateName), CurrentState->ThisStatesParams);
 
 	UE_LOG(LogTemp, Warning, TEXT("%s @SetCurrentState Switching state to: %s"), *GetName(), *NewState->StateName.ToString());
+
+	//This is where one would call a state initalise function to have the character recive the properties of the new state.
+	//An example could be to run initalise state in order to play a new animation on the character.
 }
 
 //----------------------------------GET CURRENT STATE---------------------------------------------------------------------------

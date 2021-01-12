@@ -65,9 +65,7 @@ public:
 		class UStateBase* NextState;
 
 
-	//protected:
-
-		// these are the inputs in sequence requierd to progress with this link, if all inputs are correct and found within the same frame set in the same order as the list it can be accepted, if one is correct it cannot progress.
+	// these are the inputs in sequence requierd to progress with this link, if all inputs are correct and found within the same frame set in the same order as the list it can be accepted, if one is correct it cannot progress.
 	UPROPERTY(EditAnywhere)
 		FLinkConditonButton RequiredButtons;
 
@@ -90,14 +88,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		int32 MissTolerance;
 
-	// if true will reverse the result of the special link conditon, so that this link only becomes available when the special link condition is false.
-	/*UPROPERTY(EditAnywhere)
-		bool ReverseSpecialLinkCondition = false;*/
-
-	// Character specific SpecialLinkCondition, used for character specific mechanincs that gate certain moves.
-	/*UPROPERTY(EditAnywhere)
-		UBBSpecialLinkCondition* SpecialLinkCondition;
-		*/
 	//Set this to true if this link relies on anim notifes to switch state.
 	//NOTE, requires animation to play and hit custom notify to switch state, allows for queueing of states while in animation.
 	UPROPERTY(EditAnywhere)
@@ -121,25 +111,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		class UStateParametersBase* ThisStatesParams;
 
-	// This is a class that contains a list of StateLinks that should always be available in every move, such as jump, dodge and dash.
-	// Make sure to set up the list for each characters specific SharedLinks.
-	/*UPROPERTY(EditAnywhere)
-		class UBBSharedStateLinks* SharedStateLinks;*/
-
 	// These are the states that this state can link to. They are in priority order,
 	//Place the hardest to perform at the top, so that they are more likley to happen.
 	UPROPERTY(EditAnywhere)
 		TArray<FStateLink> StateLinks;
-
-
-	virtual void InitializeThisState(ASampleCharacter * Character);
-	virtual void ResetTimeInThisState();
-	virtual void UpdateTimeInThisState(float TimeInState);
-
-
-private:
-	float TimeInThisState = 0.0f;
-
-
 
 };

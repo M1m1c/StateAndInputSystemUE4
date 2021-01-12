@@ -22,7 +22,6 @@ public:
 	ASampleCharacter(const FObjectInitializer& ObjectInitializer);
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	//  This is the idle state for the character, this is needed so that each character gets a character specific state machine.
@@ -38,7 +37,6 @@ protected:
 	float deltaTime = 0.016f;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void ForwardInputStreamToStateMachine(const TArray<struct FInputFrame> &InputStream);
@@ -47,7 +45,8 @@ public:
 	virtual UStateBase* GetCurrentState();
 	virtual UStateBase* GetDefaultState();
 
-	//this is the state that will be switched to when a UBBSwitchQueuedStateThresholdNotify is hit, unlesss it is the defualt state.
+	//Not Used as intended in this project, since there is no character with animations present.
+	//this is the state that will be switched to when a custom anim notify is hit, unlesss it is the defualt state.
 	//this gets set in the StateBase class.
 	UStateBase * QuedState;
 
