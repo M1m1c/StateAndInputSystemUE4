@@ -187,42 +187,34 @@ void ASamplePlayerController::CalculateDirectionalInput()
 			break;
 		case (1 << (int32)EAxisDirections::XPossitive):
 			//Right direction
-			UE_LOG(LogTemp, Warning, TEXT("Right Direction"));
 			CurrentInputFrame.DirectionalInput = EInputDirections::Right;
 			break;
 		case (1 << (int32)EAxisDirections::XNegative):
 			//Left direction
-			UE_LOG(LogTemp, Warning, TEXT("Left Direction"));
 			CurrentInputFrame.DirectionalInput = EInputDirections::Left;
 			break;
 		case (1 << (int32)EAxisDirections::YPossitive):
 			//Up direction
-			UE_LOG(LogTemp, Warning, TEXT("Up Direction"));
 			CurrentInputFrame.DirectionalInput = EInputDirections::Up;
 			break;
 		case (1 << (int32)EAxisDirections::YNegative):
 			//Down direction
-			UE_LOG(LogTemp, Warning, TEXT("Down Direction"));
 			CurrentInputFrame.DirectionalInput = EInputDirections::Down;
 			break;
 		case (1 << (int32)EAxisDirections::XPossitive) + (1 << (int32)EAxisDirections::YPossitive) :
 			//UpRight direction
-			UE_LOG(LogTemp, Warning, TEXT("UpRight Direction"));
 			CurrentInputFrame.DirectionalInput = EInputDirections::UpRight;
 			break;
 		case (1 << (int32)EAxisDirections::XPossitive) + (1 << (int32)EAxisDirections::YNegative) :
 			//DownRight direction
-			UE_LOG(LogTemp, Warning, TEXT("DownRight Direction"));
 			CurrentInputFrame.DirectionalInput = EInputDirections::DownRight;
 			break;
 		case (1 << (int32)EAxisDirections::XNegative) + (1 << (int32)EAxisDirections::YPossitive) :
 			//UpLeft direction
-			UE_LOG(LogTemp, Warning, TEXT("UpLeft Direction"));
 			CurrentInputFrame.DirectionalInput = EInputDirections::UpLeft;
 			break;
 		case (1 << (int32)EAxisDirections::XNegative) + (1 << (int32)EAxisDirections::YNegative) :
 			//DownLeft direction
-			UE_LOG(LogTemp, Warning, TEXT("DownLeft Direction"));
 			CurrentInputFrame.DirectionalInput = EInputDirections::DownLeft;
 			break;
 		}
