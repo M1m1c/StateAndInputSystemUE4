@@ -27,7 +27,8 @@ protected:
 
 public:	
 
-	// Loops through all state links in the state link list.
+	//This is called in PlayerPawns tick function (Called each frame), all it does is go through all possible moves from the current state to see if one is accepted.
+	//Takes in a reference to the playerpawn, A list of all the inputs performed within a timespan and all the StateLinks this state has to other states. 
 	virtual void CheckAllStateLinks(UStateBase* currentState, const TArray<FInputFrame> &InputStream,float deltaTime);
 
 	bool DoesLastElementOfInputstreamContainAcitveButtons(const TArray<FInputFrame> & InputStream);
@@ -36,13 +37,17 @@ private:
 
 	bool CheckStateLinks(FString currentStateName, const TArray<FInputFrame> & InputStream, TArray<FStateLink> StateLinksToCheck);
 
-	// Checks one state link and returns a state machine completion type if the input matches the conditions
+	// This is the bulk of the state machine, this is where the comparison betwwen input stream and move conditions are made
+	//Returns true if there is a match
+	//returns false if no match
 	virtual bool CheckOneStateLink( const TArray<FInputFrame> &InputStream, FStateLink OneStateLink);
 
 	int32 FindRequiredDirectionsInInputStream(FStateLink &OneStateLink, const TArray<FInputFrame> & InputStream, bool allowButtons);
 
-	//Loops through InputStream comparing the inputs to TempRequierdDirections, when a match is found breaks and returns true.
-	//"Start" is start point of loop and "End" is the end point unless "ReverseLoop" is true, in which case they are reversed
+	//Loops through inputstream either forwards or reverse from loopStart to loopStop.
+	//Returns true if it manages to match the correct direction with one in the inputstream.
+	//Uses TempReturnIndex as an out parameter to determine which index the correct direction was found on,
+	//so that next cycle around that can be used to determine where to start the loop.
 	bool FoundRequiredDirectionIndexInInputStream(
 		TArray<FLinkConditonDirection> &TempRequierdDirections,
 		const TArray<FInputFrame> & InputStream,
@@ -60,9 +65,9 @@ private:
 
 	int32 SetFoundCorrectDirectional(int32 CorrectDirectionalInputs, int32 Index, TArray<FLinkConditonDirection> &TempRequierdDirections);
 
+	//Takes the last inputframe's buttons and compares them to the buttons set as requirements in OneStateLink.
+	//Returns amount of correct buttons that were found. 
 	int32 FindRequiredButtonsInInputStream(const TArray<FInputFrame> & InputStream, FStateLink &OneStateLink);
-
-	//bool CheckSpecialLinkCondition(FStateLink &OneStateLink, ASampleCharacter * BBCharacter);
 
 	// Sets QueuedState to DestinationState
 	virtual void QueueState( UStateBase* DestiantionState, FStateLink OneStateLink);

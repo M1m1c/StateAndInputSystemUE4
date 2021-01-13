@@ -43,7 +43,6 @@ void ASampleCharacter::ForwardInputStreamToStateMachine(const TArray<struct FInp
 	MyStateMachine->CheckAllStateLinks(CurrentState, InputStream, deltaTime);
 }
 
-//Sets the current state to the new state
 void ASampleCharacter::SetCurrentState(UStateBase * NewState)
 {
 	if (NewState == nullptr)

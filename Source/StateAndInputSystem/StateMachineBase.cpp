@@ -27,9 +27,7 @@ void UStateMachineBase::BeginPlay()
 	DefaultLink.NextState = MyCharacter->GetDefaultState();
 }
 
-//This is called in PlayerPawns tick function (Called each frame), all it does is go through all possible moves from the current state to see if one is accepted.
-//Takes in a reference to the playerpawn, A list of all the inputs performed within a timespan, , all the StateLinks this state has to other states, 
-void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArray<FInputFrame> &InputStream, float deltaTime)//, TArray<FStateLink> StateLinks)
+void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArray<FInputFrame> &InputStream, float deltaTime)
 {
 	
 	if (MyCharacter->QuedState != nullptr)
@@ -104,11 +102,6 @@ bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<F
 	return retflag;
 }
 
-
-
-// This is the bulk of the state machine, this is where the comparison betwwen input stream and move conditions are made
-//Returns accepted if there is a match
-//returns not accepted if no match
 bool UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream, FStateLink OneStateLink)
 {
 
@@ -183,8 +176,6 @@ bool UStateMachineBase::DoesLastElementOfInputstreamContainAcitveButtons(const T
 	return false;
 }
 
-//Takes the last inputframe's buttons and compares them to the buttons set as requirements in OneStateLink.
-//Returns amount of correct buttons that were found. 
 int32 UStateMachineBase::FindRequiredButtonsInInputStream(const TArray<FInputFrame> & InputStream, FStateLink &OneStateLink)
 {
 	int correctButtons = 0;
@@ -291,10 +282,6 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 	return CorrectDirectionalInputs;
 }
 
-//Loops through inputstream either forwards or reverse from loopStart to loopStop.
-//Returns true if it manages to match the correct direction with one in the inputstream.
-//Uses TempReturnIndex as an out parameter to determine which index the correct direction was found on,
-//so that next cycle around that can be used to determine where to start the loop.
 bool UStateMachineBase::FoundRequiredDirectionIndexInInputStream(
 	TArray<FLinkConditonDirection> &TempRequierdDirections,
 	const TArray<FInputFrame> & InputStream,

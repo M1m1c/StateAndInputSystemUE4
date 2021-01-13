@@ -465,6 +465,7 @@ void ASamplePlayerController::PressButton(EInputButtons type, float time)
 	}
 }
 
+//Takes in a button type, gets the button from ButtonAtoms via GetInputButtonPressed and toggles the bool values of the button to reflect that it is released
 void ASamplePlayerController::ReleaseButton(EInputButtons type, float time)
 {
 	auto retValue = GetInputButtonPressed(type);

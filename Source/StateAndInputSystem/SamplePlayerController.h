@@ -39,8 +39,10 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupInputComponent() override;
+
 	//Clears the input stream when called
 	virtual void ClearInputStream();
+
 	//Removes one input in the input stream
 	virtual void ConsumeOneInput(int32 InputListPosition);
 
@@ -132,7 +134,7 @@ private:
 	UPROPERTY(VisibleInstanceOnly)
 		TArray<FInputFrame> InputStream;
 
-
+	//Gets the UInputButtonClass of the button sent in
 	UInputButtonClass* GetInputButtonPressed(EInputButtons ButtonInput);
 
 	ASampleCharacter* myCharacter;

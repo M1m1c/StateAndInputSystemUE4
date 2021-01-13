@@ -61,7 +61,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		class UStateBase* NextState;
 
-
 	// these are the inputs in sequence requierd to progress with this link, if all inputs are correct and found within the same frame set in the same order as the list it can be accepted, if one is correct it cannot progress.
 	UPROPERTY(EditAnywhere)
 		FLinkConditonButton RequiredButtons;
@@ -89,7 +88,6 @@ public:
 	//NOTE, requires animation to play and hit custom notify to switch state, allows for queueing of states while in animation.
 	UPROPERTY(EditAnywhere)
 		bool UseNotifyStateSwitching = false;
-
 
 };
 
