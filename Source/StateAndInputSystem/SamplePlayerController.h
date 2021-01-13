@@ -39,7 +39,9 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupInputComponent() override;
+	//Clears the input stream when called
 	virtual void ClearInputStream();
+	//Removes one input in the input stream
 	virtual void ConsumeOneInput(int32 InputListPosition);
 
 
@@ -51,11 +53,13 @@ public:
 protected:
 
 
-	//Measures the state of buttons and adds them to the input stream
+	//Measures the state of buttons and adds them to the current Input Frame
 	void CalculateButtonInput();
 
+	//Adds a reference to the current inputframe to the inputstream array
 	void AddInputToInputStream();
 
+	//Removes inputs in the input stream that have lived to the expiration time.
 	void RemoveOldInputAtoms();
 
 	//Called twice in tick, for X- and Y-Axis respectively.
@@ -67,6 +71,8 @@ protected:
 
 	bool DoesButtonAtomsHaveActiveButtons();
 	bool IsAButtonHeldInInputStream();
+
+	//Returns true if a held button in frameButtons array is the same in ButtonAtoms (Current active butons)  
 	bool IsACurrentButtonHeldInArray(TArray<FInputButtonStruct>& frameButtons);
 
 	UInputButtonClass * FindSpecificButtonInArray(TArray<UInputButtonClass*>& collection, EInputButtons button);
@@ -113,6 +119,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 		int32 InputBufferSize = 10;
 
+	//an array used for tracking the buttons current states
 	UPROPERTY(VisibleAnywhere, Category = "Input Atoms")
 		TArray<UInputButtonClass*> ButtonAtoms;
 

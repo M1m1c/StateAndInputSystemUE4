@@ -229,7 +229,7 @@ void ASamplePlayerController::CalculateDirectionalInput()
 	}
 }
 
-//Measures the state of buttons and adds them to the input stream
+//Measures the state of buttons and adds them to the current Input Frame
 void ASamplePlayerController::CalculateButtonInput()
 {
 	CurrentInputFrame.ContainedButtons.Reset();
@@ -301,6 +301,7 @@ void ASamplePlayerController::CalculateButtonInput()
 	}
 }
 
+//Adds a reference to the current inputframe to the inputstream array
 void ASamplePlayerController::AddInputToInputStream()
 {
 	if ((DoesButtonAtomsHaveActiveButtons() && !IsAButtonHeldInInputStream()) ||
@@ -325,7 +326,7 @@ void ASamplePlayerController::AddInputToInputStream()
 //Removes inputs in the input stream that have lived to the expiration time.
 void ASamplePlayerController::RemoveOldInputAtoms()
 {
-	//TODO make so that held buttons don't get removed unless they change state to released or up
+
 	if (InputStream.Num() <= 0)
 	{
 		return;
@@ -382,6 +383,7 @@ bool ASamplePlayerController::IsAButtonHeldInInputStream()
 	return retflag;
 }
 
+// returns true if a held button in frameButtons array is the same in ButtonAtoms (Current active butons)  
 bool ASamplePlayerController::IsACurrentButtonHeldInArray(TArray<FInputButtonStruct>& frameButtons)
 {
 	bool retflag = false;
