@@ -451,117 +451,33 @@ TArray<FInputFrame>& ASamplePlayerController::GetInputStreamReference()
 	return InputStream;;
 }
 
-void ASamplePlayerController::PressButton(EInputButtons type, float time)
+//Takes in a button type, gets the button from ButtonAtoms via GetInputButtonActivated(),
+// and toggles the bool values of the button to reflect that it is pressed or released based on bool isPressed
+void ASamplePlayerController::ActivateButton(EInputButtons type, float time, bool isPressed)
 {
-	auto retValue = GetInputButtonPressed(type);
+	auto retValue = GetInputButtonActivated(type);
 	if (retValue != false)
 	{
-		retValue->bButtonPushedGate = false;
+		if (isPressed) 
+		{
+			retValue->bButtonPushedGate = false;
+		}
+		else
+		{
+			retValue->bButtonHolding = false;
+			retValue->bButtonPushedGate = true;
+		}
+		
 		retValue->InputTimeStamp = time;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s @PressButton could not find desired button in list of input atoms"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("%s @ActivateButton could not find desired button in list of input atoms"), *GetName());
 	}
 }
 
-//Takes in a button type, gets the button from ButtonAtoms via GetInputButtonPressed and toggles the bool values of the button to reflect that it is released
-void ASamplePlayerController::ReleaseButton(EInputButtons type, float time)
-{
-	auto retValue = GetInputButtonPressed(type);
-	if (retValue != false)
-	{
-		retValue->bButtonHolding = false;
-		retValue->bButtonPushedGate = true;
-		retValue->InputTimeStamp = time;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s @ReleaseButton could not find desired button in list of input atoms"), *GetName());
-	}
-}
-
-void ASamplePlayerController::LeftFaceButtonPressed()
-{
-	DebuggTimer = 0;
-	float TimeWhenEntered = CurrentTime;
-	PressButton(EInputButtons::LeftFace, TimeWhenEntered);
-}
-
-void ASamplePlayerController::LeftFaceButtonReleased()
-{
-	float TimeWhenEntered = CurrentTime;
-	ReleaseButton(EInputButtons::LeftFace, TimeWhenEntered);
-}
-
-void ASamplePlayerController::TopFaceButtonPressed()
-{
-	DebuggTimer = 0;
-	float TimeWhenEntered = CurrentTime;
-	PressButton(EInputButtons::TopFace, TimeWhenEntered);
-}
-
-void ASamplePlayerController::TopFaceButtonReleased()
-{
-	float TimeWhenEntered = CurrentTime;
-	ReleaseButton(EInputButtons::TopFace, TimeWhenEntered);
-}
-
-void ASamplePlayerController::RightFaceButtonPressed()
-{
-	DebuggTimer = 0;
-	float TimeWhenEntered = CurrentTime;
-	PressButton(EInputButtons::RightFace, TimeWhenEntered);
-}
-
-void ASamplePlayerController::RightFaceButtonReleased()
-{
-	float TimeWhenEntered = CurrentTime;
-	ReleaseButton(EInputButtons::RightFace, TimeWhenEntered);
-}
-
-void ASamplePlayerController::BottomFaceButtonPressed()
-{
-	DebuggTimer = 0;
-	float TimeWhenEntered = CurrentTime;
-	PressButton(EInputButtons::BottomFace, TimeWhenEntered);
-}
-
-void ASamplePlayerController::BottomFaceButtonReleased()
-{
-	float TimeWhenEntered = CurrentTime;
-	ReleaseButton(EInputButtons::BottomFace, TimeWhenEntered);
-}
-
-void ASamplePlayerController::RightBumperPressed()
-{
-	DebuggTimer = 0;
-	float TimeWhenEntered = CurrentTime;
-	PressButton(EInputButtons::RightBumper, TimeWhenEntered);
-}
-
-void ASamplePlayerController::RightBumperReleased()
-{
-	float TimeWhenEntered = CurrentTime;
-	ReleaseButton(EInputButtons::RightBumper, TimeWhenEntered);
-}
-
-void ASamplePlayerController::LeftBumperPressed()
-{
-	DebuggTimer = 0;
-	float TimeWhenEntered = CurrentTime;
-	PressButton(EInputButtons::LeftBumper, TimeWhenEntered);
-}
-
-void ASamplePlayerController::LeftBumperReleased()
-{
-	float TimeWhenEntered = CurrentTime;
-	ReleaseButton(EInputButtons::LeftBumper, TimeWhenEntered);
-}
-
-
-//Gets the UInputButtonClass of the button sent in
-UInputButtonClass * ASamplePlayerController::GetInputButtonPressed(EInputButtons ButtonInput)
+//Gets the pointer of an index in ButtonAtoms that equals the button sent in
+UInputButtonClass * ASamplePlayerController::GetInputButtonActivated(EInputButtons ButtonInput)
 {
 
 	UInputButtonClass* ReturnPointer = nullptr;
@@ -582,4 +498,80 @@ UInputButtonClass * ASamplePlayerController::GetInputButtonPressed(EInputButtons
 	return ReturnPointer;
 }
 
+void ASamplePlayerController::LeftFaceButtonPressed()
+{
+	DebuggTimer = 0;
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::LeftFace, TimeWhenEntered,true);
+}
 
+void ASamplePlayerController::LeftFaceButtonReleased()
+{
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::LeftFace, TimeWhenEntered,false);
+}
+
+void ASamplePlayerController::TopFaceButtonPressed()
+{
+	DebuggTimer = 0;
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::TopFace, TimeWhenEntered,true);
+}
+
+void ASamplePlayerController::TopFaceButtonReleased()
+{
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::TopFace, TimeWhenEntered,false);
+}
+
+void ASamplePlayerController::RightFaceButtonPressed()
+{
+	DebuggTimer = 0;
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::RightFace, TimeWhenEntered,true);
+}
+
+void ASamplePlayerController::RightFaceButtonReleased()
+{
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::RightFace, TimeWhenEntered,false);
+}
+
+void ASamplePlayerController::BottomFaceButtonPressed()
+{
+	DebuggTimer = 0;
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::BottomFace, TimeWhenEntered,true);
+}
+
+void ASamplePlayerController::BottomFaceButtonReleased()
+{
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::BottomFace, TimeWhenEntered,false);
+}
+
+void ASamplePlayerController::RightBumperPressed()
+{
+	DebuggTimer = 0;
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::RightBumper, TimeWhenEntered,true);
+}
+
+void ASamplePlayerController::RightBumperReleased()
+{
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::RightBumper, TimeWhenEntered,false);
+}
+
+void ASamplePlayerController::LeftBumperPressed()
+{
+	DebuggTimer = 0;
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::LeftBumper, TimeWhenEntered,true);
+}
+
+void ASamplePlayerController::LeftBumperReleased()
+{
+	float TimeWhenEntered = CurrentTime;
+	ActivateButton(EInputButtons::LeftBumper, TimeWhenEntered,false);
+}

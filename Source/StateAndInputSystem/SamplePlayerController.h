@@ -85,8 +85,12 @@ protected:
 	float YAxis = 0.0f;
 	float XAxis = 0.0f;
 
-	void PressButton(EInputButtons type, float time);
-	void ReleaseButton(EInputButtons type, float time);
+	//Takes in a button type, gets the button from ButtonAtoms via GetInputButtonActivated(),
+	// and toggles the bool values of the button to reflect that it is pressed or released based on bool isPressed
+	void ActivateButton(EInputButtons type, float time, bool isPressed);
+
+	//Gets the pointer of an index in ButtonAtoms that equals the button sent in
+	UInputButtonClass* GetInputButtonActivated(EInputButtons ButtonInput);
 
 	void LeftFaceButtonPressed();
 	void LeftFaceButtonReleased();
@@ -133,9 +137,6 @@ private:
 	//How many frames there are input for in the input buffer
 	UPROPERTY(VisibleInstanceOnly)
 		TArray<FInputFrame> InputStream;
-
-	//Gets the UInputButtonClass of the button sent in
-	UInputButtonClass* GetInputButtonPressed(EInputButtons ButtonInput);
 
 	ASampleCharacter* myCharacter;
 
