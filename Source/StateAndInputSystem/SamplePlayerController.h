@@ -83,8 +83,8 @@ protected:
 	float YAxis = 0.0f;
 	float XAxis = 0.0f;
 
-	UInputButtonClass* PressButton(EInputButtons type, float time);
-	UInputButtonClass* ReleaseButton(EInputButtons type, float time);
+	void PressButton(EInputButtons type, float time);
+	void ReleaseButton(EInputButtons type, float time);
 
 	void LeftFaceButtonPressed();
 	void LeftFaceButtonReleased();
@@ -103,13 +103,6 @@ protected:
 
 	void LeftBumperPressed();
 	void LeftBumperReleased();
-
-	UInputButtonClass* LeftFaceButton;
-	UInputButtonClass* TopFaceButton;
-	UInputButtonClass* RightFaceButton;
-	UInputButtonClass* BottomFaceButton;
-	UInputButtonClass* RightBumper;
-	UInputButtonClass* LeftBumper;
 
 	// How long an input frame lives for in seconds.
 	UPROPERTY(EditAnywhere)

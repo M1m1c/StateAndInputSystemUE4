@@ -459,7 +459,7 @@ TArray<FInputFrame>& ASamplePlayerController::GetInputStreamReference()
 	return InputStream;;
 }
 
-UInputButtonClass* ASamplePlayerController::PressButton(EInputButtons type, float time)
+void ASamplePlayerController::PressButton(EInputButtons type, float time)
 {
 	auto retValue = GetInputButtonPressed(type);
 	if (retValue != false)
@@ -471,10 +471,9 @@ UInputButtonClass* ASamplePlayerController::PressButton(EInputButtons type, floa
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%s @PressButton could not find desired button in list of input atoms"), *GetName());
 	}
-	return retValue;
 }
 
-UInputButtonClass * ASamplePlayerController::ReleaseButton(EInputButtons type, float time)
+void ASamplePlayerController::ReleaseButton(EInputButtons type, float time)
 {
 	auto retValue = GetInputButtonPressed(type);
 	if (retValue != false)
@@ -487,85 +486,84 @@ UInputButtonClass * ASamplePlayerController::ReleaseButton(EInputButtons type, f
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%s @ReleaseButton could not find desired button in list of input atoms"), *GetName());
 	}
-	return retValue;
 }
 
 void ASamplePlayerController::LeftFaceButtonPressed()
 {
 	DebuggTimer = 0;
 	float TimeWhenEntered = CurrentTime;
-	LeftFaceButton = PressButton(EInputButtons::LeftFace, TimeWhenEntered);
+	PressButton(EInputButtons::LeftFace, TimeWhenEntered);
 }
 
 void ASamplePlayerController::LeftFaceButtonReleased()
 {
 	float TimeWhenEntered = CurrentTime;
-	LeftFaceButton = ReleaseButton(EInputButtons::LeftFace, TimeWhenEntered);
+	ReleaseButton(EInputButtons::LeftFace, TimeWhenEntered);
 }
 
 void ASamplePlayerController::TopFaceButtonPressed()
 {
 	DebuggTimer = 0;
 	float TimeWhenEntered = CurrentTime;
-	TopFaceButton = PressButton(EInputButtons::TopFace, TimeWhenEntered);
+	PressButton(EInputButtons::TopFace, TimeWhenEntered);
 }
 
 void ASamplePlayerController::TopFaceButtonReleased()
 {
 	float TimeWhenEntered = CurrentTime;
-	TopFaceButton = ReleaseButton(EInputButtons::TopFace, TimeWhenEntered);
+	ReleaseButton(EInputButtons::TopFace, TimeWhenEntered);
 }
 
 void ASamplePlayerController::RightFaceButtonPressed()
 {
 	DebuggTimer = 0;
 	float TimeWhenEntered = CurrentTime;
-	RightFaceButton = PressButton(EInputButtons::RightFace, TimeWhenEntered);
+	PressButton(EInputButtons::RightFace, TimeWhenEntered);
 }
 
 void ASamplePlayerController::RightFaceButtonReleased()
 {
 	float TimeWhenEntered = CurrentTime;
-	RightFaceButton = ReleaseButton(EInputButtons::RightFace, TimeWhenEntered);
+	ReleaseButton(EInputButtons::RightFace, TimeWhenEntered);
 }
 
 void ASamplePlayerController::BottomFaceButtonPressed()
 {
 	DebuggTimer = 0;
 	float TimeWhenEntered = CurrentTime;
-	BottomFaceButton = PressButton(EInputButtons::BottomFace, TimeWhenEntered);
+	PressButton(EInputButtons::BottomFace, TimeWhenEntered);
 }
 
 void ASamplePlayerController::BottomFaceButtonReleased()
 {
 	float TimeWhenEntered = CurrentTime;
-	BottomFaceButton = ReleaseButton(EInputButtons::BottomFace, TimeWhenEntered);
+	ReleaseButton(EInputButtons::BottomFace, TimeWhenEntered);
 }
 
 void ASamplePlayerController::RightBumperPressed()
 {
 	DebuggTimer = 0;
 	float TimeWhenEntered = CurrentTime;
-	RightBumper = PressButton(EInputButtons::RightBumper, TimeWhenEntered);
+	PressButton(EInputButtons::RightBumper, TimeWhenEntered);
 }
 
 void ASamplePlayerController::RightBumperReleased()
 {
 	float TimeWhenEntered = CurrentTime;
-	RightBumper = ReleaseButton(EInputButtons::RightBumper, TimeWhenEntered);
+	ReleaseButton(EInputButtons::RightBumper, TimeWhenEntered);
 }
 
 void ASamplePlayerController::LeftBumperPressed()
 {
 	DebuggTimer = 0;
 	float TimeWhenEntered = CurrentTime;
-	LeftBumper = PressButton(EInputButtons::LeftBumper, TimeWhenEntered);
+	PressButton(EInputButtons::LeftBumper, TimeWhenEntered);
 }
 
 void ASamplePlayerController::LeftBumperReleased()
 {
 	float TimeWhenEntered = CurrentTime;
-	LeftBumper = ReleaseButton(EInputButtons::LeftBumper, TimeWhenEntered);
+	ReleaseButton(EInputButtons::LeftBumper, TimeWhenEntered);
 }
 
 
