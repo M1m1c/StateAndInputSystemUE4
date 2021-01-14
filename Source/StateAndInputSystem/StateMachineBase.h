@@ -9,6 +9,7 @@
 #include "StateMachineBase.generated.h"
 
 class ASampleCharacter;
+class ASamplePlayerController;
 
 
 
@@ -49,10 +50,11 @@ private:
 
 	virtual int32 CheckHowManyBitFlagsSet(int32 FlagsToCheck, int32 EnumCount);
 
-
+	//Loops forwards and backwards to find valid and correct directionals in inputstream as fast as it is able.
 	//Finds the first required directional in inputstream by looping forwards using CouldFindValidDirectionAndIndex().
 	//Then loops backwards through both the required directionals and the inputstream until it finds matches for all required,
 	// or it runs out of dirChecksteps.
+	//If the InputStream is more than half full it will only loop backwards.
 	int32 FindRequiredDirectionsInInputStream(FStateLink &OneStateLink, const TArray<FInputFrame> & InputStream, bool allowButtons);
 
 	//Loops through inputstream either forwards or reverse from loopStart to loopStop.
@@ -83,6 +85,10 @@ private:
 
 	ASampleCharacter* MyCharacter;
 
+	ASamplePlayerController* MySamplePlayerController;
+
 	float DeltaTime;
+
+	int32 HalfInputBufferSize =1;
 	
 };

@@ -17,19 +17,28 @@ void UStateMachineBase::BeginPlay()
 {
 	Super::BeginPlay();
 	MyCharacter = Cast<ASampleCharacter>(this->GetOwner());
-
+	
 	if (!MyCharacter)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s @BeginPlay failed to cast owner to ASampleCharacter, destroying this component"), *GetName());
 		this->DestroyComponent();
 	}
 
+	MySamplePlayerController = Cast<ASamplePlayerController>(MyCharacter->GetController());
+
+	if (!MySamplePlayerController)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s @BeginPlay failed to cast owner to ASamplePlayerController, destroying this component"), *GetName());
+		this->DestroyComponent();
+	}
+
+	HalfInputBufferSize = (MySamplePlayerController->GetInputBufferSize()/2);
 	DefaultLink.NextState = MyCharacter->GetDefaultState();
 }
 
 void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArray<FInputFrame> &InputStream, float deltaTime)
 {
-	
+
 	if (MyCharacter->QuedState != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%s @CheckStateLinks Allready has queued state returning, no need to check links"), *GetName());
@@ -45,10 +54,11 @@ void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArra
 				StateToSwitchTo = nullptr;
 				DeltaTime = deltaTime;
 				// SET LINKS
-				if (CheckStateLinks(currentState->StateName.ToString(), InputStream, currentState->StateLinks)) return;			
+				if (CheckStateLinks(currentState->StateName.ToString(), InputStream, currentState->StateLinks)) return;
 			}
 
 			//Here one could call CheckStateLinks for different collections of links, such as ones that don't require buttons.
+
 		}
 	}
 	else
@@ -95,7 +105,7 @@ bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<F
 				return retflag;
 			}
 
-			if(CheckOneStateLink(InputStream, StateLinksToCheck[i]))
+			if (CheckOneStateLink(InputStream, StateLinksToCheck[i]))
 			{
 				Cast<ASamplePlayerController>(MyCharacter->GetController())->ClearInputStream();
 				UE_LOG(LogTemp, Warning, TEXT("@CheckStateLinks %s LINK Accepted"), *StateToSwitchTo->StateName.ToString());
@@ -211,7 +221,7 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 	int32 dirCheckSteps = TempRequierdDirections.Num() + 1;
 	int32 CorrectDirectionalInputs = 0;
 	int32 FirstDirInputIndex = 0;
-	int32 LastDirInputIndex = InputStream.Num()-1;
+	int32 LastDirInputIndex = InputStream.Num() - 1;
 	int32 TempReturnIndex = 0;
 	float sequenceLengthFail = (float)OneStateLink.SequenceLengthFailThreshold * DeltaTime;
 	float LastTimeStamp = InputStream.Last().TimeStamp;
@@ -219,7 +229,8 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 
 	while (dirCheckSteps > 0)
 	{
-		if (CorrectDirectionalInputs == 0)
+
+		if (CorrectDirectionalInputs == 0 && InputStream.Num() <= HalfInputBufferSize)
 		{
 			//Find the first correct direction that is within the SequenceLength threshold
 			if (TempRequierdDirections.IsValidIndex(0))
@@ -349,7 +360,7 @@ bool UStateMachineBase::CouldFindValidDirectionAndIndex(
 			RetFlag = true;
 			TempReturnIndex = i;
 			break;
-		}	
+		}
 	}
 	return RetFlag;
 }
