@@ -57,17 +57,23 @@ void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArra
 	}
 }
 
-int32 UStateMachineBase::CheckHowManyBitFlagsSet(int32 FlagsToCheck, int32 EnumCount)
+bool UStateMachineBase::DoesLastElementOfInputstreamContainAcitveButtons(const TArray<FInputFrame> & InputStream)
 {
-	int32 ReturnValue = 0;
-	for (int32 i = 0; i < EnumCount; i++)
+	auto lastButtons = InputStream.Last().ContainedButtons;
+	for (int32 i = 0; i < lastButtons.Num(); i++)
 	{
-		if (FlagsToCheck & 1 << i)
+		if (lastButtons.IsValidIndex(i))
 		{
-			ReturnValue++;
+			if (lastButtons[i].ButtonState != EButtonState::Up &&
+				lastButtons[i].ButtonState != EButtonState::Up &&
+				lastButtons[i].ButtonState != EButtonState::Count)
+			{
+				return true;
+			}
 		}
+
 	}
-	return ReturnValue;
+	return false;
 }
 
 bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<FInputFrame> & InputStream, TArray<FStateLink> StateLinksToCheck)
@@ -119,6 +125,7 @@ bool UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream
 
 	if (amountOfButtonBitflags > 0 && OneStateLink.RequieredDirections.Num())
 	{
+		//Buttons and Directions
 		CorrectButtonInputs = FindRequiredButtonsInInputStream(InputStream, OneStateLink);
 		CorrectDirectionInputs = FindRequiredDirectionsInInputStream(OneStateLink, InputStream, true);
 
@@ -131,6 +138,7 @@ bool UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream
 	}
 	else if (amountOfButtonBitflags > 0 && !OneStateLink.RequieredDirections.Num())
 	{
+		//Buttons Only
 		CorrectButtonInputs = FindRequiredButtonsInInputStream(InputStream, OneStateLink);
 
 		if (CorrectButtonInputs == amountOfButtonBitflags)
@@ -141,6 +149,7 @@ bool UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream
 	}
 	else if (OneStateLink.RequieredDirections.Num() > 0 && amountOfButtonBitflags <= 0)
 	{
+		//Directions Only
 		CorrectDirectionInputs = FindRequiredDirectionsInInputStream(OneStateLink, InputStream, false);
 
 		if ((CorrectDirectionInputs + OneStateLink.MissTolerance) >= OneStateLink.RequieredDirections.Num())
@@ -155,25 +164,6 @@ bool UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream
 	}
 
 	return ReturnCompletionType;
-}
-
-bool UStateMachineBase::DoesLastElementOfInputstreamContainAcitveButtons(const TArray<FInputFrame> & InputStream)
-{
-	auto lastButtons = InputStream.Last().ContainedButtons;
-	for (int32 i = 0; i < lastButtons.Num(); i++)
-	{
-		if (lastButtons.IsValidIndex(i))
-		{
-			if (lastButtons[i].ButtonState != EButtonState::Up &&
-				lastButtons[i].ButtonState != EButtonState::Up &&
-				lastButtons[i].ButtonState != EButtonState::Count)
-			{
-				return true;
-			}
-		}
-
-	}
-	return false;
 }
 
 int32 UStateMachineBase::FindRequiredButtonsInInputStream(const TArray<FInputFrame> & InputStream, FStateLink &OneStateLink)
@@ -202,13 +192,27 @@ int32 UStateMachineBase::FindRequiredButtonsInInputStream(const TArray<FInputFra
 	return correctButtons;
 }
 
+int32 UStateMachineBase::CheckHowManyBitFlagsSet(int32 FlagsToCheck, int32 EnumCount)
+{
+	int32 ReturnValue = 0;
+	for (int32 i = 0; i < EnumCount; i++)
+	{
+		if (FlagsToCheck & 1 << i)
+		{
+			ReturnValue++;
+		}
+	}
+	return ReturnValue;
+}
+
+//First finds the 
 int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStateLink, const TArray<FInputFrame> & InputStream, bool allowButtons)
 {
 	TArray<FLinkConditonDirection> TempRequierdDirections = OneStateLink.RequieredDirections;
 	int32 dirCheckSteps = TempRequierdDirections.Num() + 1;
 	int32 CorrectDirectionalInputs = 0;
 	int32 FirstDirInputIndex = 0;
-	int32 LastDirInputIndex = InputStream.Num();
+	int32 LastDirInputIndex = InputStream.Num()-1;
 	int32 TempReturnIndex = 0;
 	float sequenceLengthFail = (float)OneStateLink.SequenceLengthFailThreshold * DeltaTime;
 	float LastTimeStamp = InputStream.Last().TimeStamp;
@@ -252,7 +256,7 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 			{
 				if (TempRequierdDirections.IsValidIndex(z) &&
 					InputStream.IsValidIndex(FirstDirInputIndex) &&
-					(InputStream.IsValidIndex(LastDirInputIndex) || InputStream.Num() == LastDirInputIndex))
+					(InputStream.IsValidIndex(LastDirInputIndex)))
 				{
 
 					if (FoundRequiredDirectionIndexInInputStream(
@@ -391,12 +395,3 @@ void UStateMachineBase::QueueState(UStateBase * DestiantionState, FStateLink One
 		return;
 	}
 }
-
-int32 UStateMachineBase::SetFoundCorrectDirectional(int32 CorrectDirectionalInputs, int32 Index, TArray<FLinkConditonDirection> &TempRequierdDirections)
-{
-	TempRequierdDirections[Index].FoundThisDirInput = true;
-	return CorrectDirectionalInputs += 1;
-}
-
-
-

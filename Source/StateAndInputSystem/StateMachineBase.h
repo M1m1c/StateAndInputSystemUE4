@@ -42,6 +42,14 @@ private:
 	//returns false if no match
 	virtual bool CheckOneStateLink( const TArray<FInputFrame> &InputStream, FStateLink OneStateLink);
 
+
+	//Takes the last inputframe's buttons and compares them to the buttons set as requirements in OneStateLink.
+	//Returns amount of correct buttons that were found. 
+	int32 FindRequiredButtonsInInputStream(const TArray<FInputFrame> & InputStream, FStateLink &OneStateLink);
+
+	virtual int32 CheckHowManyBitFlagsSet(int32 FlagsToCheck, int32 EnumCount);
+
+
 	int32 FindRequiredDirectionsInInputStream(FStateLink &OneStateLink, const TArray<FInputFrame> & InputStream, bool allowButtons);
 
 	//Loops through inputstream either forwards or reverse from loopStart to loopStop.
@@ -63,16 +71,8 @@ private:
 
 	bool IsButtonInFrameJustPressed(const FInputFrame & InputFrame);
 
-	int32 SetFoundCorrectDirectional(int32 CorrectDirectionalInputs, int32 Index, TArray<FLinkConditonDirection> &TempRequierdDirections);
-
-	//Takes the last inputframe's buttons and compares them to the buttons set as requirements in OneStateLink.
-	//Returns amount of correct buttons that were found. 
-	int32 FindRequiredButtonsInInputStream(const TArray<FInputFrame> & InputStream, FStateLink &OneStateLink);
-
 	// Sets QueuedState to DestinationState
 	virtual void QueueState( UStateBase* DestiantionState, FStateLink OneStateLink);
-
-	virtual int32 CheckHowManyBitFlagsSet(int32 FlagsToCheck, int32 EnumCount);
 
 	//Used for passing the next state to run state
 	UStateBase* StateToSwitchTo = nullptr;
