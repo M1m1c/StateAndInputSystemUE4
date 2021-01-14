@@ -9,6 +9,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStateInfoUIDelegate, FText, stateNameText, class UStateParametersBase *,params);
 
 class UStateBase;
+class UStateMachineBase;
+class ASamplePlayerController;
 
 UCLASS()
 class STATEANDINPUTSYSTEM_API ASampleCharacter : public ACharacter
@@ -36,6 +38,8 @@ protected:
 
 	float deltaTime = 0.016f;
 
+	ASamplePlayerController* MySamplePlayerController;
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 
@@ -50,7 +54,7 @@ public:
 	//this gets set in the StateBase class.
 	UStateBase * QuedState;
 
-	class UStateMachineBase * MyStateMachine;
+	UStateMachineBase * MyStateMachine;
 
 	
 };

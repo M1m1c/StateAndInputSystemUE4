@@ -5,6 +5,7 @@
 #include "StateBase.h"
 #include "InputClasses.h"
 #include "StateParametersBase.h"
+#include "SamplePlayerController.h"
 
 
 // Sets default values
@@ -26,6 +27,8 @@ void ASampleCharacter::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("%s @beginPlay no DefaultState set, destroying this character"), *GetName());
 		Destroy();
 	}
+
+	MySamplePlayerController = Cast<ASamplePlayerController>(GetController());
 
 	SetCurrentState(DefaultState);
 }
@@ -49,6 +52,8 @@ void ASampleCharacter::SetCurrentState(UStateBase * NewState)
 	{		
 			NewState = DefaultState;
 	}
+
+	MySamplePlayerController->ClearInputStream();
 
 	CurrentState = NewState;
 	QuedState = nullptr;
