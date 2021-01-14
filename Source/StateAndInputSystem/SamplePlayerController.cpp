@@ -1,7 +1,6 @@
 // © 2018, Ludvig Baummann Olsson. All rights reserved.
 
 #include "SamplePlayerController.h"
-
 #include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
 #include "SampleCharacter.h"
 #include "StateBase.h"
@@ -449,6 +448,11 @@ void ASamplePlayerController::ConsumeOneInput(int32 InputListPosition)
 TArray<FInputFrame>& ASamplePlayerController::GetInputStreamReference()
 {
 	return InputStream;;
+}
+
+int32 ASamplePlayerController::GetInputBufferSize()
+{
+	return InputBufferSize;
 }
 
 //Takes in a button type, gets the button from ButtonAtoms via GetInputButtonActivated(),

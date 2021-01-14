@@ -49,6 +49,8 @@ public:
 
 	virtual TArray<FInputFrame>& GetInputStreamReference();
 
+	virtual int32 GetInputBufferSize();
+
 	bool bActivated = false;
 
 
