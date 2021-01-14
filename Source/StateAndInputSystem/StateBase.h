@@ -71,6 +71,9 @@ public:
 
 	//Simple version: How many frames you have available to perform the input sequence.
 	//Detailed version: The total amount of frames that the input sequence will allow, if inputs are outside of this amount then they will be ignored.
+	//NOTE: This is limited by InputExpirationTime in PlayerController,
+	// if 60 fps and expiration time of 1.0f seconds any amount above 60 will function as 60,
+	// since inputs will expire before they can be used.
 	UPROPERTY(EditAnywhere)
 		int32 SequenceLengthFailThreshold;
 

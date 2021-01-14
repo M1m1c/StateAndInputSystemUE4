@@ -112,7 +112,7 @@ protected:
 
 	// How long an input frame lives for in seconds.
 	UPROPERTY(EditAnywhere)
-		float InputExpirationTime = 0.5f;
+		float InputExpirationTime = 1.0f;
 
 	// The inputStream will never exceede this number.
 	UPROPERTY(EditAnywhere)
