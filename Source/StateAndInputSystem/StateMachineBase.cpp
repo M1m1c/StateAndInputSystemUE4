@@ -205,7 +205,6 @@ int32 UStateMachineBase::CheckHowManyBitFlagsSet(int32 FlagsToCheck, int32 EnumC
 	return ReturnValue;
 }
 
-//First finds the 
 int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStateLink, const TArray<FInputFrame> & InputStream, bool allowButtons)
 {
 	TArray<FLinkConditonDirection> TempRequierdDirections = OneStateLink.RequieredDirections;
@@ -225,11 +224,10 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 			//Find the first correct direction that is within the SequenceLength threshold
 			if (TempRequierdDirections.IsValidIndex(0))
 			{
-				if (FoundRequiredDirectionIndexInInputStream(
-					TempRequierdDirections,
+				if (CouldFindValidDirectionAndIndex(
+					TempRequierdDirections[0],
 					InputStream,
 					false,
-					0,
 					FirstDirInputIndex,
 					InputStream.Num(),
 					TempReturnIndex,
@@ -259,11 +257,10 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 					(InputStream.IsValidIndex(LastDirInputIndex)))
 				{
 
-					if (FoundRequiredDirectionIndexInInputStream(
-						TempRequierdDirections,
+					if (CouldFindValidDirectionAndIndex(
+						TempRequierdDirections[z],
 						InputStream,
 						true,
-						z,
 						FirstDirInputIndex,
 						LastDirInputIndex,
 						TempReturnIndex,
@@ -286,11 +283,10 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 	return CorrectDirectionalInputs;
 }
 
-bool UStateMachineBase::FoundRequiredDirectionIndexInInputStream(
-	TArray<FLinkConditonDirection> &TempRequierdDirections,
+bool UStateMachineBase::CouldFindValidDirectionAndIndex(
+	FLinkConditonDirection &TempRequierdDirection,
 	const TArray<FInputFrame> & InputStream,
 	bool ReverseLoop,
-	int32 RequiredDirIndex,
 	int32 Start,
 	int32 End,
 	int32 &TempReturnIndex,
@@ -319,13 +315,13 @@ bool UStateMachineBase::FoundRequiredDirectionIndexInInputStream(
 			continue;
 		}
 
-		bool isThisInputAlreadyFound = TempRequierdDirections[RequiredDirIndex].FoundThisDirInput == true;
+		bool isThisInputAlreadyFound = TempRequierdDirection.FoundThisDirInput == true;
 		if (isThisInputAlreadyFound)
 		{
 			continue;
 		}
 
-		bool isRequiredDirectionNotInInputFrame = !(TempRequierdDirections[RequiredDirIndex].RequieredDirection & 1 << (int32)InputStream[i].DirectionalInput);
+		bool isRequiredDirectionNotInInputFrame = !(TempRequierdDirection.RequieredDirection & 1 << (int32)InputStream[i].DirectionalInput);
 		if (isRequiredDirectionNotInInputFrame)
 		{
 			continue;

@@ -50,17 +50,19 @@ private:
 	virtual int32 CheckHowManyBitFlagsSet(int32 FlagsToCheck, int32 EnumCount);
 
 
+	//Finds the first required directional in inputstream by looping forwards using CouldFindValidDirectionAndIndex().
+	//Then loops backwards through both the required directionals and the inputstream until it finds matches for all required,
+	// or it runs out of dirChecksteps.
 	int32 FindRequiredDirectionsInInputStream(FStateLink &OneStateLink, const TArray<FInputFrame> & InputStream, bool allowButtons);
 
 	//Loops through inputstream either forwards or reverse from loopStart to loopStop.
-	//Returns true if it manages to match the correct direction with one in the inputstream.
+	//Returns true if it manages to match the correct direction with a valid input in the inputstream.
 	//Uses TempReturnIndex as an out parameter to determine which index the correct direction was found on,
 	//so that next cycle around that can be used to determine where to start the loop.
-	bool FoundRequiredDirectionIndexInInputStream(
-		TArray<FLinkConditonDirection> &TempRequierdDirections,
+	bool CouldFindValidDirectionAndIndex(
+		FLinkConditonDirection &TempRequierdDirection,
 		const TArray<FInputFrame> & InputStream,
 		bool ReverseLoop,
-		int32 RequiredDirIndex,
 		int32 Start,
 		int32 End,
 		int32 &TempReturnIndex,
