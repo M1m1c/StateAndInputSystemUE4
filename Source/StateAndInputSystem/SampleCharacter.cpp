@@ -30,7 +30,15 @@ void ASampleCharacter::BeginPlay()
 
 	MySamplePlayerController = Cast<ASamplePlayerController>(GetController());
 
+	if (!DefaultState) 
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s @BeginPlay default state was null, set a default state in character"), *GetName());
+		this->SetActorTickEnabled(false);
+		return;
+	}
+	
 	SetCurrentState(DefaultState);
+	
 }
 
 // Called every frame
@@ -49,8 +57,13 @@ void ASampleCharacter::ForwardInputStreamToStateMachine(const TArray<struct FInp
 void ASampleCharacter::SetCurrentState(UStateBase * NewState)
 {
 	if (NewState == nullptr)
-	{		
-			NewState = DefaultState;
+	{
+		if (!DefaultState) 
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s @SetCurrentState, default state was null, returning without setting new state"), *GetName());
+			return; 
+		}
+		NewState = DefaultState;
 	}
 
 	MySamplePlayerController->ClearInputStream();

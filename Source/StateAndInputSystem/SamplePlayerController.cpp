@@ -140,6 +140,7 @@ void ASamplePlayerController::Tick(float DeltaSeconds)
 		if (myCharacter->GetCurrentState() == nullptr)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("%s @Tick had no curent state"), *GetName());
+			this->SetActorTickEnabled(false);
 			return;
 		}
 
