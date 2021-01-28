@@ -113,4 +113,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		TArray<FStateLink> StateLinks;
 
+	// This is a class that contains a list of StateLinks that should always be available in every move, such as jump, dodge and dash.
+	// Make sure to set up the list for each characters specific SharedLinks.
+	UPROPERTY(EditAnywhere)
+		class USharedStateLinks* SharedStateLinks;
+
 };

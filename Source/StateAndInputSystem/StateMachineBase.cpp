@@ -3,6 +3,7 @@
 #include "StateMachineBase.h"
 #include "SampleCharacter.h"
 #include "SamplePlayerController.h"
+#include "SharedStateLinks.h"
 
 
 // Sets default values for this component's properties
@@ -55,6 +56,13 @@ void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArra
 				DeltaTime = deltaTime;
 				// SET LINKS
 				if (CheckStateLinks(currentState->StateName.ToString(), InputStream, currentState->StateLinks)) return;
+
+				//SHARED LINKS
+				auto shared = currentState->SharedStateLinks;
+				if (shared)
+				{
+					if (CheckStateLinks(currentState->StateName.ToString(), InputStream, shared->StateLinks)) return;
+				}
 			}
 
 			//Here one could call CheckStateLinks for different collections of links, such as ones that don't require buttons.
