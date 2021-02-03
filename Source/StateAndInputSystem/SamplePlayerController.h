@@ -31,7 +31,7 @@ public:
 	
 	FInputStreamUIDelegate OnInputStreamUpdate;
 
-	float DebuggTimer;
+
 	float StickSensitivityThreshold = 0.45f;
 
 	ASamplePlayerController();

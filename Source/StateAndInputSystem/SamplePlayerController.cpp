@@ -117,7 +117,6 @@ void ASamplePlayerController::Tick(float DeltaSeconds)
 
 	if (bActivated)
 	{
-		DebuggTimer += DeltaSeconds;
 
 		CurrentTime = UKismetSystemLibrary::GetGameTimeInSeconds(this);
 
@@ -125,7 +124,6 @@ void ASamplePlayerController::Tick(float DeltaSeconds)
 		AxisDirectionToggle(YAxis, (int32)EAxisDirections::YPossitive, (int32)EAxisDirections::YNegative);
 		CalculateDirectionalInput();
 
-		FString DebuggInpputStream = "";
 		CalculateButtonInput();
 		AddInputToInputStream();
 
@@ -505,7 +503,6 @@ UInputButtonClass * ASamplePlayerController::GetInputButtonActivated(EInputButto
 
 void ASamplePlayerController::LeftFaceButtonPressed()
 {
-	DebuggTimer = 0;
 	float TimeWhenEntered = CurrentTime;
 	ActivateButton(EInputButtons::LeftFace, TimeWhenEntered,true);
 }
@@ -518,7 +515,6 @@ void ASamplePlayerController::LeftFaceButtonReleased()
 
 void ASamplePlayerController::TopFaceButtonPressed()
 {
-	DebuggTimer = 0;
 	float TimeWhenEntered = CurrentTime;
 	ActivateButton(EInputButtons::TopFace, TimeWhenEntered,true);
 }
@@ -531,7 +527,7 @@ void ASamplePlayerController::TopFaceButtonReleased()
 
 void ASamplePlayerController::RightFaceButtonPressed()
 {
-	DebuggTimer = 0;
+
 	float TimeWhenEntered = CurrentTime;
 	ActivateButton(EInputButtons::RightFace, TimeWhenEntered,true);
 }
@@ -544,7 +540,7 @@ void ASamplePlayerController::RightFaceButtonReleased()
 
 void ASamplePlayerController::BottomFaceButtonPressed()
 {
-	DebuggTimer = 0;
+
 	float TimeWhenEntered = CurrentTime;
 	ActivateButton(EInputButtons::BottomFace, TimeWhenEntered,true);
 }
@@ -557,7 +553,6 @@ void ASamplePlayerController::BottomFaceButtonReleased()
 
 void ASamplePlayerController::RightBumperPressed()
 {
-	DebuggTimer = 0;
 	float TimeWhenEntered = CurrentTime;
 	ActivateButton(EInputButtons::RightBumper, TimeWhenEntered,true);
 }
@@ -570,7 +565,6 @@ void ASamplePlayerController::RightBumperReleased()
 
 void ASamplePlayerController::LeftBumperPressed()
 {
-	DebuggTimer = 0;
 	float TimeWhenEntered = CurrentTime;
 	ActivateButton(EInputButtons::LeftBumper, TimeWhenEntered,true);
 }
