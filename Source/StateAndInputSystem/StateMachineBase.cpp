@@ -357,13 +357,7 @@ bool UStateMachineBase::CouldFindValidDirectionAndIndex(
 			continue;
 		}
 
-		if (allowButtons && IsButtonInFrameJustPressed(InputStream[i]))
-		{
-			RetFlag = true;
-			TempReturnIndex = i;
-			break;
-		}
-		else if (InputStream[i].ContainedButtons.Num() == 0)
+		if (allowButtons || InputStream[i].ContainedButtons.Num() == 0)
 		{
 			RetFlag = true;
 			TempReturnIndex = i;
