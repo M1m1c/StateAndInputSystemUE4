@@ -73,7 +73,6 @@ private:
 		int32 frameFail,
 		bool allowButtons);
 
-	bool IsButtonInFrameJustPressed(const FInputFrame & InputFrame);
 
 	// Sets QueuedState to DestinationState
 	virtual void QueueState( UStateBase* DestiantionState, FStateLink OneStateLink);

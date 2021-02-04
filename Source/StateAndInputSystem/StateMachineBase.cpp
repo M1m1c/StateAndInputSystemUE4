@@ -367,23 +367,6 @@ bool UStateMachineBase::CouldFindValidDirectionAndIndex(
 	return RetFlag;
 }
 
-bool UStateMachineBase::IsButtonInFrameJustPressed(const FInputFrame & InputFrame)
-{
-	bool retflag = false;
-	for (int32 i = 0; i < InputFrame.ContainedButtons.Num(); i++)
-	{
-		auto buttonFrame = InputFrame.ContainedButtons;
-		for (int32 g = 0; g < buttonFrame.Num(); g++)
-		{
-			if (buttonFrame[g].ButtonState == EButtonState::JustPressed)
-			{
-				retflag = true;
-				break;
-			}
-		}
-	}
-	return retflag;
-}
 
 void UStateMachineBase::QueueState(UStateBase * DestiantionState, FStateLink OneStateLink)
 {
