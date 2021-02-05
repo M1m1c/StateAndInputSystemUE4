@@ -65,8 +65,6 @@ void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArra
 				}
 			}
 
-			//Here one could call CheckStateLinks for different collections of links, such as ones that don't require buttons.
-
 		}
 	}
 	else
