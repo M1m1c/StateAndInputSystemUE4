@@ -65,6 +65,7 @@ private:
 	//Uses TempReturnIndex as an out parameter to determine which index the correct direction was found on,
 	//so that next cycle around that can be used to determine where to start the loop.
 	bool CouldFindValidDirectionAndIndex(
+		FStateLink &OneStateLink,
 		FLinkConditonDirection &TempRequierdDirection,
 		const TArray<FInputFrame> & InputStream,
 		bool ReverseLoop,
@@ -73,8 +74,6 @@ private:
 		int32 &TempReturnIndex,
 		float LastIndexTimeStamp,
 		float PreviousTimeStamp,
-		float TimeFail,
-		int32 frameFail,
 		bool allowButtons);
 
 

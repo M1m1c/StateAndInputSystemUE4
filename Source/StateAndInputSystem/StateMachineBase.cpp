@@ -225,10 +225,8 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 	int32 FirstDirInputIndex = 0;
 	int32 LastDirInputIndex = InputStream.Num() - 1;
 	int32 TempReturnIndex = 0;
-	float sequenceLengthFail = (float)OneStateLink.SequenceLengthFailThreshold * DeltaTime;
 	float LastIndexTimeStamp = InputStream.Last().TimeStamp;
 	float previousTimeStamp = 0.0f;
-	int32 frameGapFail = OneStateLink.FrameGapFailThreshold;
 
 	while (dirCheckSteps > 0)
 	{
@@ -239,6 +237,7 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 			if (TempRequierdDirections.IsValidIndex(0))
 			{
 				if (CouldFindValidDirectionAndIndex(
+					OneStateLink,
 					TempRequierdDirections[0],
 					InputStream,
 					false,
@@ -247,8 +246,6 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 					TempReturnIndex,
 					LastIndexTimeStamp,
 					previousTimeStamp,
-					sequenceLengthFail,
-					frameGapFail,
 					allowButtons))
 				{
 
@@ -274,6 +271,7 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 				{
 
 					if (CouldFindValidDirectionAndIndex(
+						OneStateLink,
 						TempRequierdDirections[z],
 						InputStream,
 						true,
@@ -282,8 +280,6 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 						TempReturnIndex,
 						LastIndexTimeStamp,
 						previousTimeStamp,
-						sequenceLengthFail,
-						frameGapFail,
 						allowButtons))
 					{
 						TempRequierdDirections[z].FoundThisDirInput = true;
@@ -302,6 +298,7 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 }
 
 bool UStateMachineBase::CouldFindValidDirectionAndIndex(
+	FStateLink &OneStateLink,
 	FLinkConditonDirection &TempRequierdDirection,
 	const TArray<FInputFrame> & InputStream,
 	bool ReverseLoop,
@@ -310,8 +307,6 @@ bool UStateMachineBase::CouldFindValidDirectionAndIndex(
 	int32 &TempReturnIndex,
 	float LastIndexTimeStamp,
 	float PreviousTimeStamp,
-	float sequenceLengthFail,
-	int32 frameGapFail,
 	bool allowButtons)
 {
 
@@ -320,6 +315,9 @@ bool UStateMachineBase::CouldFindValidDirectionAndIndex(
 	int LoopStop = ((ReverseLoop) ? Start : End);
 	int LoopStep = ((ReverseLoop) ? -1 : 1);
 	int32 InputStreamFrameCounter = 0;
+
+	float sequenceLengthFail = (float)OneStateLink.SequenceLengthFailThreshold * DeltaTime;
+	int32 frameGapFail = OneStateLink.FrameGapFailThreshold;
 
 	for (int32 i = LoopStart; i != LoopStop; i += LoopStep)
 	{
