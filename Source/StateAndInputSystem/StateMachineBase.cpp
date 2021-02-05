@@ -232,7 +232,8 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 	int32 LastDirInputIndex = InputStream.Num() - 1;
 	int32 TempReturnIndex = 0;
 	float sequenceLengthFail = (float)OneStateLink.SequenceLengthFailThreshold * DeltaTime;
-	float LastTimeStamp = InputStream.Last().TimeStamp;
+	float LastIndexTimeStamp = InputStream.Last().TimeStamp;
+	float previousTimeStamp = 0.0f;
 	int32 frameGapFail = OneStateLink.FrameGapFailThreshold;
 
 	while (dirCheckSteps > 0)
@@ -250,7 +251,8 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 					FirstDirInputIndex,
 					InputStream.Num(),
 					TempReturnIndex,
-					LastTimeStamp,
+					LastIndexTimeStamp,
+					previousTimeStamp,
 					sequenceLengthFail,
 					frameGapFail,
 					allowButtons))
@@ -259,6 +261,7 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 					TempRequierdDirections[0].FoundThisDirInput = true;
 					CorrectDirectionalInputs++;
 					FirstDirInputIndex = TempReturnIndex;
+					previousTimeStamp = InputStream[TempReturnIndex].TimeStamp;
 				}
 				else
 				{
@@ -283,7 +286,8 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 						FirstDirInputIndex,
 						LastDirInputIndex,
 						TempReturnIndex,
-						LastTimeStamp,
+						LastIndexTimeStamp,
+						previousTimeStamp,
 						sequenceLengthFail,
 						frameGapFail,
 						allowButtons))
@@ -292,6 +296,7 @@ int32 UStateMachineBase::FindRequiredDirectionsInInputStream(FStateLink &OneStat
 						dirCheckSteps--;
 						CorrectDirectionalInputs++;
 						LastDirInputIndex = TempReturnIndex;
+						previousTimeStamp = InputStream[TempReturnIndex].TimeStamp;
 					}
 				}
 			}
@@ -309,7 +314,8 @@ bool UStateMachineBase::CouldFindValidDirectionAndIndex(
 	int32 Start,
 	int32 End,
 	int32 &TempReturnIndex,
-	float LastTimeStamp,
+	float LastIndexTimeStamp,
+	float PreviousTimeStamp,
 	float sequenceLengthFail,
 	int32 frameGapFail,
 	bool allowButtons)
@@ -346,12 +352,23 @@ bool UStateMachineBase::CouldFindValidDirectionAndIndex(
 			continue;
 		}
 
-		if (!(LastTimeStamp >= InputStream[i].TimeStamp))
+		if (PreviousTimeStamp > 0.0f)
+		{
+			auto epsilon = 0.002f;
+			auto DeltaTimestamp = PreviousTimeStamp - InputStream[i].TimeStamp;
+			bool hasInputAlreadyBeenUsed = DeltaTimestamp < epsilon && DeltaTimestamp > -epsilon;
+			if (hasInputAlreadyBeenUsed)
+			{
+				continue;
+			}
+		}
+
+		if (!(LastIndexTimeStamp >= InputStream[i].TimeStamp))
 		{
 			continue;
 		}
 
-		bool isInputFrameNotInSequenceLength = !(LastTimeStamp - InputStream[i].TimeStamp <= sequenceLengthFail);
+		bool isInputFrameNotInSequenceLength = !(LastIndexTimeStamp - InputStream[i].TimeStamp <= sequenceLengthFail);
 		if (isInputFrameNotInSequenceLength)
 		{
 			continue;

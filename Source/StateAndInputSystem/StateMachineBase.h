@@ -68,6 +68,7 @@ private:
 		int32 Start,
 		int32 End,
 		int32 &TempReturnIndex,
+		float LastIndexTimeStamp,
 		float PreviousTimeStamp,
 		float TimeFail,
 		int32 frameFail,
