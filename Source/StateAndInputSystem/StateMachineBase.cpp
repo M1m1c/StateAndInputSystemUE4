@@ -52,7 +52,6 @@ void UStateMachineBase::CheckAllStateLinks(UStateBase* currentState, const TArra
 		{
 			if (DoesLastElementOfInputstreamContainAcitveButtons(InputStream))
 			{
-				StateToSwitchTo = nullptr;
 				DeltaTime = deltaTime;
 				// SET LINKS
 				if (CheckStateLinks(currentState->StateName.ToString(), InputStream, currentState->StateLinks)) return;
@@ -110,12 +109,12 @@ bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<F
 				UE_LOG(LogTemp, Warning, TEXT("%s @CheckStateLinks LINK %d had no next State"), *currentStateName, i);
 				return retflag;
 			}
-
-			if (CheckOneStateLink(InputStream, StateLinksToCheck[i]))
+			auto stateToSwitchTo = CheckOneStateLink(InputStream, StateLinksToCheck[i]);
+			if (stateToSwitchTo)
 			{
 				Cast<ASamplePlayerController>(MyCharacter->GetController())->ClearInputStream();
-				UE_LOG(LogTemp, Warning, TEXT("@CheckStateLinks %s LINK Accepted"), *StateToSwitchTo->StateName.ToString());
-				QueueState(StateToSwitchTo, StateLinksToCheck[i]);
+				UE_LOG(LogTemp, Warning, TEXT("@CheckStateLinks %s LINK Accepted"), *stateToSwitchTo->StateName.ToString());
+				QueueState(stateToSwitchTo, StateLinksToCheck[i]);
 				retflag = true;
 				break;
 			}
@@ -124,10 +123,10 @@ bool UStateMachineBase::CheckStateLinks(FString currentStateName, const TArray<F
 	return retflag;
 }
 
-bool UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream, FStateLink OneStateLink)
+UStateBase* UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream, FStateLink OneStateLink)
 {
 
-	bool ReturnCompletionType = false;
+	UStateBase* stateToSwitchTo = nullptr;
 	int32 CorrectButtonInputs = 0;
 	int32 CorrectDirectionInputs = 0;
 
@@ -148,8 +147,7 @@ bool UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream
 		if (CorrectButtonInputs == amountOfButtonBitflags &&
 			(CorrectDirectionInputs + OneStateLink.MissTolerance) >= OneStateLink.RequieredDirections.Num())
 		{
-			StateToSwitchTo = OneStateLink.NextState;
-			ReturnCompletionType = true;
+			stateToSwitchTo = OneStateLink.NextState;
 		}
 	}
 	else if (amountOfButtonBitflags > 0 && !OneStateLink.RequieredDirections.Num())
@@ -159,8 +157,7 @@ bool UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream
 
 		if (CorrectButtonInputs == amountOfButtonBitflags)
 		{
-			StateToSwitchTo = OneStateLink.NextState;
-			ReturnCompletionType = true;
+			stateToSwitchTo = OneStateLink.NextState;
 		}
 	}
 	else if (OneStateLink.RequieredDirections.Num() > 0 && amountOfButtonBitflags <= 0)
@@ -170,16 +167,15 @@ bool UStateMachineBase::CheckOneStateLink(const TArray<FInputFrame> &InputStream
 
 		if ((CorrectDirectionInputs + OneStateLink.MissTolerance) >= OneStateLink.RequieredDirections.Num())
 		{
-			StateToSwitchTo = OneStateLink.NextState;
-			ReturnCompletionType = true;
+			stateToSwitchTo = OneStateLink.NextState;
 		}
 	}
 	else
 	{
-		StateToSwitchTo = OneStateLink.NextState;
+		stateToSwitchTo = OneStateLink.NextState;
 	}
 
-	return ReturnCompletionType;
+	return stateToSwitchTo;
 }
 
 int32 UStateMachineBase::FindRequiredButtonsInInputStream(const TArray<FInputFrame> & InputStream, FStateLink &OneStateLink)

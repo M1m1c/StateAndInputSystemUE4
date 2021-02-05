@@ -36,12 +36,15 @@ public:
 
 private:
 
+	//This function loops through the list of State links it gets as a parameter and runs CheckOneStateLink with each link forwarded as a parameter.
+	//Runs until it either runs out of statelinks to check or
+	//CheckOneStateLink returns a state, then it calls queuestate with the new state and the link it was found in.
 	bool CheckStateLinks(FString currentStateName, const TArray<FInputFrame> & InputStream, TArray<FStateLink> StateLinksToCheck);
 
-	// This is the bulk of the state machine, this is where the comparison betwwen input stream and move conditions are made
-	//Returns true if there is a match
-	//returns false if no match
-	virtual bool CheckOneStateLink( const TArray<FInputFrame> &InputStream, FStateLink OneStateLink);
+	//This is the bulk of the state machine, this is where the comparison betwwen input stream and move conditions are made
+	//Returns a state if there is a link with its requirements filled
+	//returns nullptr if it can not find a good link
+	UStateBase* CheckOneStateLink( const TArray<FInputFrame> &InputStream, FStateLink OneStateLink);
 
 
 	//Takes the last inputframe's buttons and compares them to the buttons set as requirements in OneStateLink.
@@ -77,9 +80,6 @@ private:
 
 	// Sets QueuedState to DestinationState
 	virtual void QueueState( UStateBase* DestiantionState, FStateLink OneStateLink);
-
-	//Used for passing the next state to run state
-	UStateBase* StateToSwitchTo = nullptr;
 
 	FStateLink DefaultLink;
 
